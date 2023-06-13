@@ -25,6 +25,8 @@ class NovelsController extends Controller
 
         $novel = $this->novel->get_by_slug($slug);
 
+        if(!$novel) error_404();
+
         return $this->view("novel/fetch", ['novel' => $novel]);
     }
 
@@ -123,6 +125,7 @@ class NovelsController extends Controller
         $id = $request->input('id');
         $novel = $this->novel->get_by_id($id);
         Guard::owner($novel->user_id);
+        
         if ($this->novel->delete($id)) {
             $this->flash('success', 'You have deleted a input');
             echo 1;

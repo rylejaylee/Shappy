@@ -13,7 +13,7 @@
     <?php endif; ?>
 
     <h1><?php echo $novel->title ?></h1>
-    <img src="<?php echo $novel->img ? img($data['novel']->img) : img('novels/default.png') ?>" alt="<?php echo $novel->title ?>" height="170" width="120">
+    <img src="<?php echo $novel->img ? img($novel->img) : img('novel_cover_default.png') ?>" alt="<?php echo $novel->title ?>" height="170" width="120">
     <p><?php echo $novel->description ?></p>
 
     <h5><?php echo $novel->updated_at ?></h5>

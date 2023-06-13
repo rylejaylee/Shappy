@@ -37,7 +37,6 @@ class Response
         foreach ($this->headers as $key => $value) {
             header("$key: $value");
         }
-
-        echo is_string($this->content) ? $this->content : json_encode($this->content);
+        echo $this->content;
     }
 }
