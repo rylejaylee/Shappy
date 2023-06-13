@@ -3,16 +3,16 @@
 namespace Shappy\Http;
 
 use Shappy\Utils\FlashMessage;
-
 class Controller
 {
+
     protected function view($path, $data = [])
     {
         $view = new View($path, $data);
         return $view->render();
     }
 
-    protected function flash($key, $message) 
+    protected function flash($key, $message)
     {
         FlashMessage::set($key, $message);
     }

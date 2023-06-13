@@ -107,7 +107,7 @@ class Validator
         }
 
         // Check if the title contains any invalid characters
-        else if (!preg_match('/^[a-zA-Z0-9\s\'",.!?-]+$/', $title)) {
+        else if (!preg_match('/^[a-zA-Z0-9\s\'",.!?:-]+$/', $title)) {
             $this->error_msg =  "Title has invalid chacacters.";
         }
     }
@@ -138,7 +138,8 @@ class Validator
         $name =  ucwords($name);
         if (empty($text)) $this->error_msg =  "$name cannot be empty.";
     }
-    public function max($text, $name = 'input', $max)
+
+    public function max($text, $name, $max)
     {
         if ($this->error_msg) return;
         $name = ucwords($name);

@@ -1,44 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php include_once 'views/layouts/header.php' ?>
+<?php if (session()->has('success')) : ?>
+    <?php echo session()->get('success') ?>
+<?php endif; ?>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo SITE_NAME ?></title>
-</head>
+<h1><?php echo $novel->title ?></h1>
+<h4>by: <?php echo $novel->name ?></h4>
+<img src="<?php echo $novel->img ? img($novel->img) : img('novel_cover_default.png') ?>" alt="<?php echo $novel->title ?>" height="170" width="120">
+<p><?php echo $novel->description ?></p>
 
-<body>
-    <?php if (session()->has('success')) : ?>
-        <?php echo session()->get('success') ?>
-    <?php endif; ?>
+<h5><?php echo $novel->updated_at ?></h5>
 
-    <h1><?php echo $novel->title ?></h1>
-    <img src="<?php echo $novel->img ? img($novel->img) : img('novel_cover_default.png') ?>" alt="<?php echo $novel->title ?>" height="170" width="120">
-    <p><?php echo $novel->description ?></p>
-
-    <h5><?php echo $novel->updated_at ?></h5>
-
-
-    <?php if (is_authorized() && is_owner($novel->user_id)) : ?>
-        <a href="/novel/edit?id=<?php echo $novel->id ?>">edit</a>
-        <form id="delete_form">
-            <input type="hidden" name="id" id="novel_id" value="<?php echo $novel->id; ?>">
-            <input type="submit" value="delete">
-        </form>
-    <?php endif; ?>
-
+<?php if (is_authorized() && is_owner($novel->user_id)) : ?>
+    <a href="/novel/edit?id=<?php echo $novel->id ?>">edit</a>
+    <form id="delete_form">
+        <input type="hidden" name="id" id="novel_id" value="<?php echo $novel->id; ?>">
+        <input type="submit" value="delete">
+    </form>
     <hr>
 
-    <a href="#">Add Chapter</a>
+    <a href="/chapters/create?novel_id=<?php echo $novel->id ?>">Add Chapter</a>
 
-    <!-- list of chapters -->
-    
-    <!-- add ratings -->
-    <!-- reviews -->
-</body>
+<?php endif; ?>
 
 
-<script src="/assets//js/jquery3.7.0.min.js"></script>
+<!-- list of chapters -->
+<?php if (count($chapters)) : ?>
+    <?php foreach ($chapters as $chapter) : ?>
+        <h5>
+            <a href="/chapters/fetch?id=<?php echo $chapter->id ?>"><?php echo $chapter->title ?></a>
+            <small><?php echo $chapter->updated_at ?></small>
+        </h5>
+    <?php endforeach; ?>
+<?php else : ?>
+    <h3>No chapters added yet.</h3>
+<?php endif; ?>
+
+
+
+<!-- add ratings -->
+<!-- reviews -->
+
+<?php include_once 'views/layouts/footer.php' ?>
+
 <script>
     $(document).ready(() => {
         $("#delete_form").submit(function(e) {
@@ -58,5 +61,3 @@
         })
     })
 </script>
-
-</html>

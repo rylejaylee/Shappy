@@ -4,7 +4,6 @@ namespace Shappy\Models;
 
 use Exception;
 use Shappy\Utils\Database;
-use Shappy\Utils\FlashMessage;
 
 class Novel
 {
@@ -95,6 +94,28 @@ class Novel
             $sql = "SELECT * FROM novels WHERE id=:id";
 
             $stmt = $db->query($sql, [':id' => $id]);
+
+            $novel = $stmt->fetch();
+
+            $db->close();
+
+            return $novel;
+        } catch (Exception $e) {
+            echo "ERROR 500 : " . $e->getMessage();
+        }
+    }
+
+    public function get_by_slug_with_user($slug)
+    {
+        try {
+            $db = new Database;
+            $sql = "SELECT n.id, user_id, title, description, img, n.created_at, n.updated_at, u.name, u.email
+                    FROM novels as n
+                    JOIN users as u
+                    ON n.user_id = u.id
+                    WHERE slug=:slug";
+
+            $stmt = $db->query($sql, [':slug' => $slug]);
 
             $novel = $stmt->fetch();
 

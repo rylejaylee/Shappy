@@ -5,7 +5,6 @@ namespace Shappy\Http;
 class Request
 {
 
-
   public function __construct(
     protected array $input = [],
     protected array $files = [],

@@ -4,6 +4,7 @@ namespace Shappy\Controllers;
 
 use Shappy\Http\Controller;
 use Shappy\Http\Request;
+use Shappy\Models\Chapter;
 use Shappy\Models\Novel;
 use Shappy\Utils\Guard;
 use Shappy\Utils\Validator;
@@ -23,11 +24,15 @@ class NovelsController extends Controller
     {
         $slug = $request->input('novel');
 
-        $novel = $this->novel->get_by_slug($slug);
+        $novel = $this->novel->get_by_slug_with_user($slug);
+
+        $chapter = new Chapter;
+
+        $chapters = $chapter->get_all_by_novel_id($novel->id);
 
         if(!$novel) error_404();
 
-        return $this->view("novel/fetch", ['novel' => $novel]);
+        return $this->view("novel/fetch", ['novel' => $novel, 'chapters' => $chapters]);
     }
 
     public function create()
@@ -85,6 +90,8 @@ class NovelsController extends Controller
 
         $id = $request->input('id');
         $novel = $this->novel->get_by_id($id);
+        if(!$novel) error_404();
+
         Guard::owner($novel->user_id);  
 
         return $this->view("novel/edit", ['novel' => $novel]);
@@ -95,6 +102,7 @@ class NovelsController extends Controller
         Guard::authorized();
         $id = $request->input('id');
         $novel = $this->novel->get_by_id($id);
+        if(!$novel) error_404();
         Guard::owner($novel->user_id);
 
 
@@ -124,6 +132,7 @@ class NovelsController extends Controller
         Guard::authorized();
         $id = $request->input('id');
         $novel = $this->novel->get_by_id($id);
+        if(!$novel) error_404();
         Guard::owner($novel->user_id);
         
         if ($this->novel->delete($id)) {

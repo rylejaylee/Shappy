@@ -52,6 +52,7 @@ class Auth
     private function set_auth($auth)
     {
         $_SESSION['is_logged_in'] = 1;
+        unset($auth->password);
         $_SESSION['auth'] = $auth;
     }
 

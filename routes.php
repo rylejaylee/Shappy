@@ -18,3 +18,10 @@ $router->addRoute('GET', '/novel/edit', 'NovelsController@edit');
 $router->addRoute('POST', '/novel/update', 'NovelsController@update');
 $router->addRoute('POST', '/novel/delete', 'NovelsController@delete');
 $router->addRoute('GET', '/novel/fetch', 'NovelsController@fetch');
+// chapters routes
+$router->addRoute('GET', '/chapters/create', 'ChaptersController@create');
+$router->addRoute('POST', '/chapters/store', 'ChaptersController@store');
+$router->addRoute('GET', '/chapters/edit', 'ChaptersController@edit');
+$router->addRoute('POST', '/chapters/update', 'ChaptersController@update');
+$router->addRoute('POST', '/chapters/delete', 'ChaptersController@delete');
+$router->addRoute('GET', '/chapters/fetch', 'ChaptersController@fetch');

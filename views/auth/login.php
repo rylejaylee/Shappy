@@ -17,7 +17,7 @@
     <form action="/auth/login" method="POST">
 
         <label for="email">email</label>
-        <input type="text" name="email"><br>
+        <input type="text" name="email" value="<?php echo old('email') ?? null ?>"><br>
         <label for="password">password</label>
         <input type="password" name="password"><br>
         <input type="submit" value="submit">
