@@ -6,19 +6,19 @@ use Shappy\Http\Controller;
 use Shappy\Http\Request;
 use Shappy\Models\Chapter;
 use Shappy\Models\Novel;
+use Shappy\Models\Review;
 use Shappy\Utils\Guard;
 use Shappy\Utils\Validator;
 
 class NovelsController extends Controller
 {
-    private $validator;
-    private $novel;
 
-    public function __construct()
-    {
-        $this->validator = new Validator;
-        $this->novel = new Novel;
+    public function __construct(
+        private $validator = new Validator,
+        private $novel = new Novel
+    ) {
     }
+
 
     public function fetch(Request $request)
     {
@@ -30,9 +30,17 @@ class NovelsController extends Controller
 
         $chapters = $chapter->get_all_by_novel_id($novel->id);
 
-        if(!$novel) error_404();
+        $review = new Review;
 
-        return $this->view("novel/fetch", ['novel' => $novel, 'chapters' => $chapters]);
+        $reviews = $review->get_all_by_novel_id($novel->id);
+
+        if (!$novel) error_404();
+
+        return $this->view("novel/fetch", [
+            'novel' => $novel,
+            'chapters' => $chapters,
+            'reviews' => $reviews
+        ]);
     }
 
     public function create()
@@ -90,19 +98,19 @@ class NovelsController extends Controller
 
         $id = $request->input('id');
         $novel = $this->novel->get_by_id($id);
-        if(!$novel) error_404();
+        if (!$novel) error_404();
 
-        Guard::owner($novel->user_id);  
+        Guard::owner($novel->user_id);
 
         return $this->view("novel/edit", ['novel' => $novel]);
     }
 
     public function update(Request $request)
-    {   
+    {
         Guard::authorized();
         $id = $request->input('id');
         $novel = $this->novel->get_by_id($id);
-        if(!$novel) error_404();
+        if (!$novel) error_404();
         Guard::owner($novel->user_id);
 
 
@@ -116,7 +124,7 @@ class NovelsController extends Controller
 
         if ($this->validator->has_error()) {
             $this->flash('error', $this->validator->get_error());
-            return $this->redirect('/novel/edit?id='.$novel_id);
+            return $this->redirect('/novel/edit?id=' . $novel_id);
         }
 
         if ($this->novel->update($title, $desc, $novel_id)) {
@@ -132,9 +140,9 @@ class NovelsController extends Controller
         Guard::authorized();
         $id = $request->input('id');
         $novel = $this->novel->get_by_id($id);
-        if(!$novel) error_404();
+        if (!$novel) error_404();
         Guard::owner($novel->user_id);
-        
+
         if ($this->novel->delete($id)) {
             $this->flash('success', 'You have deleted a input');
             echo 1;

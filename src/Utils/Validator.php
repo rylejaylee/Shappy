@@ -135,8 +135,8 @@ class Validator
     public function empty($text, $name = 'input')
     {
         if ($this->error_msg) return;
-        $name =  ucwords($name);
-        if (empty($text)) $this->error_msg =  "$name cannot be empty.";
+        $name = ucwords($name);
+        if (empty(trim($text))) $this->error_msg =  "$name cannot be empty.";
     }
 
     public function max($text, $name, $max)
