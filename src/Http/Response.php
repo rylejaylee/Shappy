@@ -1,0 +1,43 @@
+<?php
+
+namespace Shappy\Http;
+
+class Response
+{
+    protected $content;
+    protected $statusCode;
+    protected $headers;
+
+    public function __construct($content = '', $statusCode = 200, $headers = [])
+    {
+        $this->content = $content;
+        $this->statusCode = $statusCode;
+        $this->headers = $headers;
+    }
+
+    public function setContent($content)
+    {
+        $this->content = $content;
+    }
+
+    public function setStatusCode($statusCode)
+    {
+        $this->statusCode = $statusCode;
+    }
+
+    public function setHeader($key, $value)
+    {
+        $this->headers[$key] = $value;
+    }
+
+    public function send()
+    {
+        http_response_code($this->statusCode);
+
+        foreach ($this->headers as $key => $value) {
+            header("$key: $value");
+        }
+
+        echo is_string($this->content) ? $this->content : json_encode($this->content);
+    }
+}

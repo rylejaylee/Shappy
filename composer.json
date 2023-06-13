@@ -1,0 +1,14 @@
+{
+    "autoload": {
+        "psr-4": {
+            "Shappy\\": "src/"
+        }
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^6.3"
+    },
+    "require": {
+        "nesbot/carbon": "^2.67",
+        "nikic/fast-route": "^1.3"
+    }
+}

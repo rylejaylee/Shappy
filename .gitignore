@@ -1,0 +1,17 @@
+# General
+.DS_Store
+Thumbs.db
+
+# Composer
+/vendor/
+composer.lock
+
+# IDE and Editor Files
+/.idea/
+/.vscode/
+/.phpstorm.meta.php
+*.sublime-project
+*.sublime-workspace
+
+# User Uploads
+/assets/images/novels
