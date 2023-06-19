@@ -21,12 +21,14 @@ class AuthController extends Controller
         $this->auth = new Auth;
     }
 
-    public function login_view() {
+    public function login_view()
+    {
         Guard::guest();
         return $this->view('auth/login');
     }
 
-    public function register_view() {
+    public function register_view()
+    {
         Guard::guest();
         return $this->view('auth/register');
     }
@@ -44,8 +46,9 @@ class AuthController extends Controller
             return $this->back();
         }
 
-        if ($this->auth->login($email, $password))
+        if ($this->auth->login($email, $password)) {
             return $this->redirect('/');
+        }
 
         return $this->back();
     }
@@ -87,7 +90,6 @@ class AuthController extends Controller
     public function logout()
     {
         $this->auth->logout();
-        return $this->redirect(HOME_URL);
+        return $this->redirect('/');
     }
-
 }

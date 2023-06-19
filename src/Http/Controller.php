@@ -2,6 +2,7 @@
 
 namespace Shappy\Http;
 
+use Shappy\Controllers\HomeController;
 use Shappy\Utils\FlashMessage;
 class Controller
 {
@@ -19,7 +20,12 @@ class Controller
 
     protected function redirect($location)
     {
-        header("Location: $location");
+        if(HOME_URL == '/') {
+            header("Location: $location");
+            exit;
+        }
+        $home_url = HOME_URL;
+        header("Location: $home_url$location");
         exit;
     }
 

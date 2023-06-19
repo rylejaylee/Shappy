@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Shappy\Http;
 
@@ -10,14 +10,19 @@ class Router
 
     public function addRoute($method, $path, $handler)
     {
-        $this->routes[$method][$path] = $handler;
+        $home_url = HOME_URL == '/' ? "" : HOME_URL;
+        $path = $path == '/' && HOME_URL != '/' ? '' : $path;
+        // dd($path);
+        $this->routes[$method][$home_url.$path] = $handler;
     }
 
     public function handleRequest(Request $request)
     {
         $method = $request->method();
         $path = parse_url($request->getPathInfo(), PHP_URL_PATH);
-        
+        // remove extra '/' in path if there is one
+        $path = ($path != '/' && $path[-1] == '/') ? substr($path, 0, -1) : $path;
+
         $handler = $this->findRouteHandler($method, $path);
         if ($handler === null) {
             echo "ERROR 404 - PAGE NOT FOUND";
@@ -40,10 +45,10 @@ class Router
             list($controller, $method) = explode('@', $handler);
 
             $namespace = '\Shappy\Controllers';
-            
+
             // Create the fully qualified class name
             $className = $namespace . '\\' . $controller;
-            
+
             // Instantiate the class using ReflectionClass
             $controllerInstance = (new ReflectionClass($className))->newInstance();
 
@@ -58,10 +63,3 @@ class Router
         exit;
     }
 }
-
-
-
-
-
-
-

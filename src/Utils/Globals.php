@@ -2,6 +2,13 @@
 
 use Shappy\Utils\FlashMessage;
 
+function url($uri = '')
+{
+    if (HOME_URL == '/')
+        return "/$uri";
+    return HOME_URL . "/$uri";
+}
+
 function session()
 {
     return new FlashMessage;
@@ -9,7 +16,16 @@ function session()
 
 function img($img_name)
 {
-    return "/assets/images/$img_name";
+    if (HOME_URL == '/')
+        return "/assets/images/$img_name";
+    return HOME_URL . "/assets/images/$img_name";
+}
+
+function asset($asset)
+{
+    if (HOME_URL == '/')
+        return "/assets/$asset";
+    return HOME_URL . "/assets/$asset";
 }
 
 // request
@@ -59,4 +75,15 @@ function error_404($msg = null)
     $error_msg = $msg;
     include_once 'views/404.php';
     exit;
+}
+
+//str
+
+function excerpt($text, $max_length)
+{
+    if (strlen($text) > $max_length) {
+        $text = substr($text, 0, $max_length) . "...";
+    }
+
+    return $text;
 }

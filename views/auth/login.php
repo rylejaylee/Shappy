@@ -1,27 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php include_once 'views/layouts/header.php' ?>
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo SITE_NAME ?> - Login</title>
-</head>
+<div class="row d-flex justify-content-center align-items-center" style="height:100%">
+    <div class="col-sm-8 col-md-6 col-lg-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h1 class="card-title">
+                    <span class="text-primary">sHappy</span> - Login
+                    <hr>
+                </h1>
 
-<body>
-    <h1>Login Page</h1>
-    <?php if (session()->has('warning')) { ?>
-        <?php echo session()->get('warning') ?>
-    <?php } ?>
+                <?php if (session()->has('warning')) { ?>
+                    <p class="text-danger">
+                        <?php echo session()->get('warning') ?>
+                    </p>
+                <?php } ?>
+                <form action="<?php echo url('auth/login') ?>" method="POST">
+                    <div class="form-outline">
+                        <input type="text" name="email" class="form-control form-control-lg" value="<?php echo old('email') ?? null ?>" />
+                        <label class="form-label">E-mail</label>
+                    </div>
 
-    <form action="/auth/login" method="POST">
+                    <div class="form-outline mt-3">
+                        <input type="password" name="password" class="form-control form-control-lg" placeholder="***********" />
+                        <label class="form-label">Password</label>
+                    </div>
 
-        <label for="email">email</label>
-        <input type="text" name="email" value="<?php echo old('email') ?? null ?>"><br>
-        <label for="password">password</label>
-        <input type="password" name="password"><br>
-        <input type="submit" value="submit">
-    </form>
-</body>
+                    <input class="btn btn-primary btn-block mt-3" type="submit" value="LOGIN">
+                </form>
 
-</html>
+                <div class="mt-4">
+                    <p>Don't have an account yet? <a href="<?php echo url('auth/register')?>">Register Here</a></p>
+                </div>
+                <p class="text-muted">sHappy &copy 2023</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php include_once 'views/layouts/footer.php' ?>

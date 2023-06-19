@@ -76,7 +76,8 @@ class Request
 
   private function sanitize($input)
   {
-    return trim(stripslashes(htmlspecialchars($input)));
+    return trim($input);
+    // return trim(stripslashes(htmlspecialchars($input)));
   }
 
   // public function unset_old() {

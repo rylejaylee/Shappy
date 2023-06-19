@@ -7,18 +7,19 @@ use Shappy\Utils\Database;
 
 class Novel
 {
-    public function create($title, $user_id, $desc, $img = null)
+    public function create($title, $user_id, $desc, $category_id, $img = null, )
     {
         try {
             $db = new Database;
-            $sql = "INSERT INTO novels (title, slug, user_id, description, img) VALUES (:title, :slug, :user_id, :desc, :img)";
+            $sql = "INSERT INTO novels (title, slug, user_id, description, category_id, img) VALUES (:title, :slug, :user_id, :desc, :category_id, :img)";
 
             $params = [
-                ":title"    =>      $title,
-                ":slug"     =>      $this->title_to_slug($title),
-                ":user_id"  =>      $user_id,
-                ":desc"     =>      $desc,
-                ":img"      =>      $img,
+                ":title"        =>      $title,
+                ":slug"         =>      $this->title_to_slug($title),
+                ":user_id"      =>      $user_id,
+                ":desc"         =>      $desc,
+                ":category_id"  =>      $category_id,
+                ":img"          =>      $img,
             ];
 
             $db->query($sql, $params);
@@ -56,7 +57,12 @@ class Novel
     {
         try {
             $db = new Database;
-            $sql = "SELECT * FROM novels ORDER BY updated_at DESC";
+            $sql = "SELECT novels.*, category 
+                    FROM novels  
+                    JOIN categories 
+                    ON novels.category_id = categories.id
+                    ORDER BY updated_at 
+                    DESC";
 
             $stmt = $db->query($sql);
 

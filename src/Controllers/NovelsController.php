@@ -4,6 +4,7 @@ namespace Shappy\Controllers;
 
 use Shappy\Http\Controller;
 use Shappy\Http\Request;
+use Shappy\Models\Category;
 use Shappy\Models\Chapter;
 use Shappy\Models\Novel;
 use Shappy\Models\Review;
@@ -46,7 +47,9 @@ class NovelsController extends Controller
     public function create()
     {
         Guard::authorized();
-        return $this->view('novel/create');
+        $category = new Category;
+        $categories = $category->get_all();
+        return $this->view('novel/create', ['categories' => $categories]);
     }
 
     public function store(Request $request)
@@ -55,19 +58,20 @@ class NovelsController extends Controller
 
         $title = $request->input('title');
         $desc = $request->input('desc');
+        $category = $request->input('category');
 
         $image_file = $request->file('image');
         $image_name = null;
 
         $this->validator->title($title);
         $this->validator->empty($desc, 'Description');
+        $this->validator->empty($category, 'Category');
         $this->validator->max($desc, 'Description', 5000);
 
         if ($image_file["tmp_name"]) {
             $this->validator->image($image_file);
             $this->validator->allowed_image($image_file);
         }
-
 
         if ($this->validator->has_error()) {
             $this->flash('error', $this->validator->get_error());
@@ -82,7 +86,7 @@ class NovelsController extends Controller
             $image_name = "novels/" . bin2hex(random_bytes(16)) . "." . $image_extension;
         }
 
-        if ($this->novel->create($title, auth()->id, $desc, $image_name)) {
+        if ($this->novel->create($title, auth()->id, $desc, $category, $image_name)) {
             if ($image_file["tmp_name"]) {
                 move_uploaded_file($image_file["tmp_name"], "assets/images/$image_name");
             }
@@ -121,7 +125,7 @@ class NovelsController extends Controller
         $this->validator->title($title);
         $this->validator->empty($desc, 'Description');
         $this->validator->max($desc, 'Description', 5000);
-
+    
         if ($this->validator->has_error()) {
             $this->flash('error', $this->validator->get_error());
             return $this->redirect('/novel/edit?id=' . $novel_id);

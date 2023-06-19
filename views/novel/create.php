@@ -1,19 +1,57 @@
 <?php include_once 'views/layouts/header.php' ?>
 
-<h1>Create Novel</h1>
 
-<?php if (session()->has('error')) { ?>
-    <?php echo session()->get('error') ?>
-<?php } ?>
+<div class="row d-flex justify-content-center align-items-center h-100">
+    <div class="col-lg-4">
+        <div class="card mt-5">
+            <div class="card-body">
+                <h1 class="card-title text-primary text-center">Create Novel</h1>
+                <hr class="hr">
+                <?php if (session()->has('error')) { ?>
+                    <div class="alert alert-danger d-flex align-items-center" role="alert">
+                        <i class="fas fa-triangle-exclamation me-2"></i>
+                        <div>
+                            <?php echo session()->get('error') ?>
+                        </div>
+                    </div>
+                <?php } ?>
 
-<form action="/novel/store" method="POST" enctype="multipart/form-data">
-    <label for="image">Select an image:</label>
-    <input type="file" name="image" id="image"> <br>
-    <label for="title">Title</label>
-    <input type="text" name="title" value="<?php echo old('title') ?>"><br>
-    <label for="desc">Description</label>
-    <textarea name="desc" id="desc" cols="30" rows="10"><?php echo old('desc')  ?></textarea>
-    <input type="submit" value="create" name="submit">
-</form>
+                <form action="<?php echo url('novel/store') ?>" method="POST" enctype="multipart/form-data">
+
+                    <div class="mb-3">
+                        <label class="form-label">Novel Cover</label>
+                        <input class="form-control" type="file" name="image">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Title</label>
+                        <input type="text" class="form-control" placeholder="Your new novel title" name="title" value="<?php echo old('title') ?? '' ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleFormControlTextarea1" class="form-label">Content</label>
+                        <textarea class="form-control" id="editor" name="desc" rows="3"></textarea>
+                    </div>
+                    <select class="form-select" aria-label="Default select example" name="category">
+                        <option selected value="">Select Category</option>
+                        <?php foreach ($categories as $category): ?>
+                            <option value="<?php echo $category->id ?>"><?php echo $category->category ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <input type="submit" value="create" name="submit" class="mt-3 btn btn-primary btn-block btn-lg">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <?php include_once 'views/layouts/footer.php' ?>
+
+<script>
+    tinymce.init({
+        selector: 'textarea#editor',
+        skin: 'bootstrap',
+        plugins: 'lists, link, image, media',
+        toolbar: 'h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link image media | removeformat help',
+        menubar: false,
+    });
+</script>

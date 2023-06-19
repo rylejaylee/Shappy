@@ -1,8 +1,8 @@
 <?php
 
 use Shappy\Http\Router;
-
 $router = new Router;
+$home = HOME_URL;
 
 $router->addRoute('GET', '/', 'HomeController@index');
 // Auth routes
@@ -27,3 +27,5 @@ $router->addRoute('POST', '/chapters/delete', 'ChaptersController@delete');
 $router->addRoute('GET', '/chapters/fetch', 'ChaptersController@fetch');
 // reviews routes
 $router->addRoute('POST', '/reviews/store', 'ReviewsController@store');
+$router->addRoute('POST', '/reviews/update', 'ReviewsController@update');
+$router->addRoute('POST', '/reviews/delete', 'ReviewsController@delete');

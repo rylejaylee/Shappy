@@ -4,7 +4,7 @@
 <?php if (session()->has('error')) { ?>
     <?php echo session()->get('error') ?>
 <?php } ?>
-<form action="/chapters/store" method="POST">
+<form action="<?php echo url('/chapters/store') ?>" method="POST">
     <input type="hidden" name="novel_id" value="<?php echo $novel_id ?>">
     <label for="title">Title</label>
     <input type="text" name="title" value="<?php echo old('title') ?>"><br>
