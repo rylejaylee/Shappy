@@ -79,7 +79,7 @@ class ChaptersController extends Controller
         if (!$chapter) error_404();
 
         Guard::owner($chapter->user_id);
-
+        
         return $this->view('/chapters/edit', ['chapter' => $chapter]);
     }
 

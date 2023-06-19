@@ -105,14 +105,15 @@ class NovelsController extends Controller
         if (!$novel) error_404();
 
         Guard::owner($novel->user_id);
-
-        return $this->view("novel/edit", ['novel' => $novel]);
+        $category = new Category;
+        $categories = $category->get_all();
+        return $this->view("novel/edit", ['novel' => $novel, 'categories' => $categories]);
     }
 
     public function update(Request $request)
     {
         Guard::authorized();
-        $id = $request->input('id');
+        $id = $request->input('novel_id');
         $novel = $this->novel->get_by_id($id);
         if (!$novel) error_404();
         Guard::owner($novel->user_id);
@@ -121,17 +122,19 @@ class NovelsController extends Controller
         $novel_id = $request->input('novel_id');
         $title = $request->input('title');
         $desc = $request->input('desc');
+        $category = $request->input('category');
 
         $this->validator->title($title);
         $this->validator->empty($desc, 'Description');
         $this->validator->max($desc, 'Description', 5000);
+        $this->validator->empty($category, 'Category');
     
         if ($this->validator->has_error()) {
             $this->flash('error', $this->validator->get_error());
             return $this->redirect('/novel/edit?id=' . $novel_id);
         }
 
-        if ($this->novel->update($title, $desc, $novel_id)) {
+        if ($this->novel->update($title, $desc, $category, $novel_id)) {
             $this->flash('success', 'Congrats! You have updated a novel');
             return $this->redirect("/novel/fetch?novel=" . $this->novel->title_to_slug($title));
         } else {

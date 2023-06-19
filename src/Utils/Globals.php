@@ -87,3 +87,33 @@ function excerpt($text, $max_length)
 
     return $text;
 }
+
+// time
+function hummanDiff($timestamp)
+{
+    $currentTimestamp = time();
+    $difference = $currentTimestamp - strtotime($timestamp);
+
+    $diffInSeconds = $difference;
+    $diffInMinutes = floor($difference / 60);
+    $diffInHours = floor($difference / (60 * 60));
+    $diffInDays = floor($difference / (60 * 60 * 24));
+    $diffInMonths = floor($difference / (60 * 60 * 24 * 30));
+    $diffInYears = floor($difference / (60 * 60 * 24 * 365));
+
+    if ($diffInYears > 0) {
+        $humanDifference = $diffInYears . " year(s) ago";
+    } elseif ($diffInMonths > 0) {
+        $humanDifference = $diffInMonths . " month(s) ago";
+    } elseif ($diffInDays > 0) {
+        $humanDifference = $diffInDays . " day(s) ago";
+    } elseif ($diffInHours > 0) {
+        $humanDifference = $diffInHours . " hour(s) ago";
+    } elseif ($diffInMinutes > 0) {
+        $humanDifference = $diffInMinutes . " minute(s) ago";
+    } else {
+        $humanDifference = $diffInSeconds . " second(s) ago";
+    }
+
+    return $humanDifference;
+}

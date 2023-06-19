@@ -4,54 +4,95 @@
     <div class="col-lg-8">
         <div class="card">
             <div class="card-body">
+                <!-- header -->
+                <div class="d-flex justify-content-between">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="<?php echo url() ?>">Home</a></li>
+                            <li class="breadcrumb-item "><?php echo $novel->title ?></li>
+                        </ol>
+                    </nav>
 
+                    <?php if (is_authorized() && is_owner($novel->user_id)) : ?>
+                        <div>
+                            <div class="d-flex">
+                                <a href="<?php echo url("novel/edit?id=$novel->id") ?>" class="btn btn-sm btn-primary btn-floating me-2">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form id="delete_form">
+                                    <input type="hidden" name="id" id="novel_id" value="<?php echo $novel->id; ?>">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger btn-floating">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                <hr class="hr">
                 <?php if (session()->has('success')) : ?>
-                    <?php echo session()->get('success') ?>
+                    <div class="alert alert-success d-flex align-items-center" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <div>
+                            <?php echo session()->get('success') ?>
+                        </div>
+                    </div>
                 <?php endif; ?>
 
-                <h1 class="card-title">
-                    <h1><?php echo $novel->title ?></h1>
-                </h1>
-
-
-                <img src="<?php echo $novel->img ? img($novel->img) : img('novel_cover_default.png') ?>" alt="<?php echo $novel->title ?>" height="170" width="120">
-
-                <h5 class="my-2">Author: <?php echo $novel->name ?></h5>
+                <div class="d-flex justify-content-center">
+                    <img src="<?php echo $novel->img ? img($novel->img) : img('novel_cover_default.png') ?>" alt="<?php echo $novel->title ?>" height="170" width="120">
+                </div>
+                <div class="text-center">
+                    <div class="my-2"><strong>Title:</strong> <?php echo $novel->title ?></div>
+                    <div class="my-2"><strong>Author:</strong> <?php echo $novel->name ?></div>
+                    <div class="my-2"><strong>Created At:</strong><?php echo $novel->updated_at ?></div>
+                    <div class="my-2"><a href="# "class="btn btn-warning btn-rounded btn-sm"><?php echo $novel->category ?></a></div>
+                </div>
+                <hr class="hr">
+                <h3>Summary</h3>
                 <p>
                     <?php echo $novel->description ?>
                 </p>
 
-                <small><?php echo $novel->updated_at ?></small>
 
+                <hr class="hr">
                 <?php if (is_authorized() && is_owner($novel->user_id)) : ?>
-                    <a href="<?php echo url("novel/edit?id=$novel->id") ?>">edit</a>
-                    <form id="delete_form">
-                        <input type="hidden" name="id" id="novel_id" value="<?php echo $novel->id; ?>">
-                        <input type="submit" value="delete">
-                    </form>
-                    <hr>
-
-                    <a href="<?php echo url("chapters/create?novel_id=$novel->id") ?>">Add Chapter</a>
+                    <div class="d-flex justify-content-end">
+                        <a href="<?php echo url("chapters/create?novel_id=$novel->id") ?>" class="btn btn-primary">
+                            <i class="fas fa-add"></i> New Chapter
+                        </a>
+                    </div>
                 <?php endif; ?>
 
 
                 <!-- list of chapters -->
                 <?php if (count($chapters)) : ?>
                     <?php foreach ($chapters as $chapter) : ?>
-                        <h5>
-                            <a href="<?php echo url("chapters/fetch?id=$chapter->id") ?>"><?php echo $chapter->title ?></a>
-                            <small><?php echo $chapter->updated_at ?></small>
-                        </h5>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="p-2 bg-light my-2">
+                                <a href="<?php echo url("chapters/fetch?id=$chapter->id") ?>" class="text-dark"><?php echo $chapter->title ?></a>
+                                <small class="text-muted"><?php echo $chapter->updated_at ?></small>
+                            </div>
+                            <?php if (is_authorized() && is_owner($novel->user_id)) : ?>
+                                <div>
+                                    <div class="d-flex">
+                                        <a href="<?php echo url("chapters/edit?id=$chapter->id") ?>" class="btn btn-sm btn-outline-primary btn-floating me-2">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        </div>
                     <?php endforeach; ?>
                 <?php else : ?>
-                    <h3>No chapters added yet.</h3>
+                    <h5 class="text-muted text-center bg-light p-3">No chapters added yet.</h5>
                 <?php endif; ?>
 
                 <!-- add ratings -->
 
                 <!-- reviews -->
-                <hr class="hr">
-                <h3>Reviews</h3>
+
+                <h3>Comments</h3>
                 <?php if (session()->has('error')) : ?>
                     <p class="text-danger"><?php echo session()->get('error') ?></p>
                 <?php endif; ?>
@@ -83,7 +124,7 @@
                         <hr>
                     <?php endforeach; ?>
                 <?php else : ?>
-                    <h3>No reviews.</h3>
+                    <h5 class="text-muted text-center bg-light p-3">No comments yet.</h5>
                 <?php endif; ?>
             </div>
         </div>

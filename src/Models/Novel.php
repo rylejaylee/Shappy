@@ -31,16 +31,19 @@ class Novel
         return 0;
     }
 
-    public function update($title, $desc, $nove_id)
+    public function update($title, $desc, $category_id, $nove_id)
     {
         try {
             $db = new Database;
-            $sql = "UPDATE novels SET title=:title, slug=:slug, description=:desc WHERE id=:novel_id";
+            $sql = "UPDATE novels 
+                    SET title=:title, slug=:slug, category_id=:category_id, description=:desc 
+                    WHERE id=:novel_id";
 
             $params = [
                 ":title"        =>      $title,
                 ":slug"         =>      $this->title_to_slug($title),
                 ":desc"         =>      $desc,
+                ":category_id"  =>      $category_id,
                 ":novel_id"     =>      $nove_id
             ];
 
@@ -115,10 +118,12 @@ class Novel
     {
         try {
             $db = new Database;
-            $sql = "SELECT n.id, user_id, title, description, img, n.created_at, n.updated_at, u.name, u.email
+            $sql = "SELECT n.id, user_id, title, description, img, n.created_at, n.updated_at, u.name, u.email, category
                     FROM novels as n
-                    JOIN users as u
+                    INNER JOIN users as u
                     ON n.user_id = u.id
+                    INNER JOIN categories as c
+                    on n.category_id = c.id
                     WHERE slug=:slug";
 
             $stmt = $db->query($sql, [':slug' => $slug]);

@@ -1,7 +1,7 @@
 <?php 
 
 define('SITE_NAME', 'SHAPPY');
-define('HOME_URL', '/');
+define('HOME_URL', '/shappy');
 
 #development state
 define('ENV', 'dev');
