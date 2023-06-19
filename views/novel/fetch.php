@@ -39,14 +39,30 @@
                     </div>
                 <?php endif; ?>
 
+                <?php if (session()->has('error')) { ?>
+                    <div class="alert alert-danger d-flex align-items-center" role="alert">
+                        <i class="fas fa-triangle-exclamation me-2"></i>
+                        <div>
+                            <?php echo session()->get('error') ?>
+                        </div>
+                    </div>
+                <?php } ?>
+
                 <div class="d-flex justify-content-center">
-                    <img src="<?php echo $novel->img ? img($novel->img) : img('novel_cover_default.png') ?>" alt="<?php echo $novel->title ?>" height="170" width="120">
+                    <div class="image-container">
+                        <img src="<?php echo $novel->img ? img($novel->img) : img('novel_cover_default.png') ?>" alt="<?php echo $novel->title ?>" height="170" width="120">
+                        <?php if (is_authorized() && is_owner($novel->user_id)) : ?>
+                            <button id="upload_cover" class="edit-button btn btn-primary btn-sm btn-floating m-1">
+                                <i class="fas fa-image"></i>
+                            </button>
+                        <?php endif; ?>
+                    </div>
                 </div>
                 <div class="text-center">
+                    <div class="my-2"><a href="# " class="btn btn-warning btn-rounded btn-sm"><?php echo $novel->category ?></a></div>
                     <div class="my-2"><strong>Title:</strong> <?php echo $novel->title ?></div>
                     <div class="my-2"><strong>Author:</strong> <?php echo $novel->name ?></div>
-                    <div class="my-2"><strong>Created At:</strong><?php echo $novel->updated_at ?></div>
-                    <div class="my-2"><a href="# "class="btn btn-warning btn-rounded btn-sm"><?php echo $novel->category ?></a></div>
+                    <div class="my-2"><strong>Date created:</strong> <?php echo date('m/d/Y', strtotime($novel->created_at)) ?></div>
                 </div>
                 <hr class="hr">
                 <h3>Summary</h3>
@@ -68,10 +84,13 @@
                 <!-- list of chapters -->
                 <?php if (count($chapters)) : ?>
                     <?php foreach ($chapters as $chapter) : ?>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="p-2 bg-light my-2">
-                                <a href="<?php echo url("chapters/fetch?id=$chapter->id") ?>" class="text-dark"><?php echo $chapter->title ?></a>
-                                <small class="text-muted"><?php echo $chapter->updated_at ?></small>
+                        <div class="d-flex justify-content-between align-items-center bg-light mt-2">
+                            <div class="p-2  my-2">
+                                <a href="<?php echo url("chapters/fetch?id=$chapter->id") ?>" class="text-dark">
+                                    <span class="text-primary fw-bold"><?php echo $chapter->title ?></span>
+                                    <small class="text-muted"><?php echo hummanDiff($chapter->updated_at) ?></small>
+                                </a>
+
                             </div>
                             <?php if (is_authorized() && is_owner($novel->user_id)) : ?>
                                 <div>
@@ -131,24 +150,86 @@
     </div>
 </div>
 
+<div class="modal fade" id="delete_modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h5><i class="fas fa-warning"></i> Confirm delete</h5>
+                <p>Are you sure you want to delete this novel?</p>
+                <hr class="hr">
+                <div class="d-flex justify-content-center">
+                    <button type="button" class="btn btn-secondary me-2" data-mdb-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger" id="delete_novel">Yes! Delete Novel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="upload_cover_modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h5><i class="fas fa-image"></i> Upload new cover</h5>
+                <hr class="hr">
+
+                <form enctype="multipart/form-data" method="POST" id="upload_cover_form">
+                    <input type="hidden" name="novel_id" value="<?php echo $novel->id ?>">
+                    <div class="mb-3">
+                        <label class="form-label">Choose image file</label>
+                        <input class="form-control" type="file" name="image">
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button class="btn btn-primary" type="submit">Upload</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php include_once 'views/layouts/footer.php' ?>
 
 <script>
     $(document).ready(() => {
         $("#delete_form").submit(function(e) {
             e.preventDefault();
+            $("#delete_modal").modal('show');
+        })
 
-            if (confirm("Are you sure you want to delete this novel?")) {
-                let data = $(this).serialize();
+        $("#upload_cover").click(function() {
+            $("#upload_cover_modal").modal('show');
+        })
 
-                $.post("<?php echo url('novel/delete') ?>", data, response => {
-                    if (Number(response)) {
-                        window.location = '<?php echo url() ?>';
-                    }
-                }).fail((xhr, status, error) => {
+        $("#delete_novel").click(function() {
+            let data = $('#delete_form').serialize();
+
+            $.post("<?php echo url('novel/delete') ?>", data, response => {
+                if (Number(response)) {
+                    window.location = '<?php echo url() ?>';
+                }
+            }).fail((xhr, status, error) => {
+                console.log(xhr.responseText);
+            });
+        })
+
+        $("#upload_cover_form").submit(function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: "<?php echo url('novel/upload_cover') ?>",
+                type: "POST",
+                data: new FormData(this),
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function(response) {
+                    window.location = '<?php echo url("novel/fetch?novel=$novel->slug") ?>';
+                },
+                error: function(xhr, status, error) {
                     console.log(xhr.responseText);
-                });
-            }
+                }
+            })
         })
     })
 </script>

@@ -128,7 +128,7 @@ class NovelsController extends Controller
         $this->validator->empty($desc, 'Description');
         $this->validator->max($desc, 'Description', 5000);
         $this->validator->empty($category, 'Category');
-    
+
         if ($this->validator->has_error()) {
             $this->flash('error', $this->validator->get_error());
             return $this->redirect('/novel/edit?id=' . $novel_id);
@@ -152,10 +152,51 @@ class NovelsController extends Controller
         Guard::owner($novel->user_id);
         if ($this->novel->delete($id)) {
             // delete cover image if novel is deleted
-            if(file_exists(".".img($novel->img)))
-                unlink(".".img($novel->img));
-            $this->flash('success', 'You have deleted a novel');
+            if ($novel->img != null && file_exists("." . img($novel->img)))
+                unlink("." . img($novel->img));
+
+            $this->flash('success', 'Congrats! You have deleted a novel');
             echo 1;
+        }
+    }
+
+    public function upload_cover(Request $request)
+    {
+        Guard::authorized();
+        $id = $request->input('novel_id');
+        $novel = $this->novel->get_by_id($id);
+
+        if (!$novel) error_404();
+        Guard::owner($novel->user_id);
+
+        $image_file = $request->file('image');
+
+        $this->validator->empty($image_file['name'], 'Cover image');
+        $this->validator->image($image_file);
+        $this->validator->allowed_image($image_file);
+
+        if ($this->validator->has_error()) {
+            $this->flash('error', $this->validator->get_error());
+            echo 0;
+            exit;
+        }
+
+        $old_image = $novel->img;
+        $image_extension = strtolower(pathinfo($image_file['name'], PATHINFO_EXTENSION));
+        $image_name = "novels/" . bin2hex(random_bytes(16)) . "." . $image_extension;
+
+        if ($this->novel->update_img($image_name, $novel->id)) {
+            // delete cover image if novel is deleted
+            if (move_uploaded_file($image_file["tmp_name"], "assets/images/$image_name")) {
+                if ($old_image != null && file_exists("." . img($old_image)))
+                    unlink("." . img($old_image));
+
+                $this->flash('success', 'Congrats! You uploaded a new cover image');
+                echo 1;
+                exit;
+            }
+            $this->flash('error', 'Something went wrong! Please try again.');
+            echo 0;
         }
     }
 }

@@ -7,7 +7,7 @@ use Shappy\Utils\Database;
 
 class Novel
 {
-    public function create($title, $user_id, $desc, $category_id, $img = null, )
+    public function create($title, $user_id, $desc, $category_id, $img = null,)
     {
         try {
             $db = new Database;
@@ -118,7 +118,7 @@ class Novel
     {
         try {
             $db = new Database;
-            $sql = "SELECT n.id, user_id, title, description, img, n.created_at, n.updated_at, u.name, u.email, category
+            $sql = "SELECT n.id, user_id, title, description, img, slug, n.created_at, n.updated_at, u.name, u.email, category
                     FROM novels as n
                     INNER JOIN users as u
                     ON n.user_id = u.id
@@ -144,6 +144,20 @@ class Novel
             $db = new Database;
             $sql = "DELETE FROM novels WHERE id=:id";
             $db->query($sql, [':id' => $id]);
+            $db->close();
+
+            return 1;
+        } catch (Exception $e) {
+            echo "ERROR 500 : " . $e->getMessage();
+        }
+    }
+
+    public function update_img($new_img, $id)
+    {
+        try {
+            $db = new Database;
+            $sql = "UPDATE novels SET img=:new_img WHERE id=:id";
+            $db->query($sql, [':id' => $id, ':new_img' => $new_img]);
             $db->close();
 
             return 1;
