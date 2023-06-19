@@ -147,11 +147,14 @@ class NovelsController extends Controller
         Guard::authorized();
         $id = $request->input('id');
         $novel = $this->novel->get_by_id($id);
+
         if (!$novel) error_404();
         Guard::owner($novel->user_id);
-
         if ($this->novel->delete($id)) {
-            $this->flash('success', 'You have deleted a input');
+            // delete cover image if novel is deleted
+            if(file_exists(".".img($novel->img)))
+                unlink(".".img($novel->img));
+            $this->flash('success', 'You have deleted a novel');
             echo 1;
         }
     }

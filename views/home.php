@@ -17,9 +17,9 @@
                     </div>
 
                 <?php endif; ?>
-                <div class="d-flex justify-content-between flex-wrap">
+                <div class="d-flex justify-content-center flex-wrap">
                     <?php foreach ($data['novels'] as $novel) : ?>
-                        <a class="text-dark my-2" href="<?php echo url("novel/fetch?novel=$novel->slug") ?>">
+                        <a class="text-dark mb-2 me-2" href="<?php echo url("novel/fetch?novel=$novel->slug") ?>">
                             <div class="card" style="width:140px; height:300px;">
                                 <img src="<?php echo $novel->img ? img($novel->img) : img('novel_cover_default.png')  ?>" alt="<?php echo $novel->title ?>" class="card-img-top" style="height:180px;">
                                 <div class="card-body p-2">
