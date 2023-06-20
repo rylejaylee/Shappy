@@ -60,12 +60,13 @@ class Novel
     {
         try {
             $db = new Database;
-            $sql = "SELECT novels.*, category 
-                    FROM novels  
-                    JOIN categories 
-                    ON novels.category_id = categories.id
-                    ORDER BY updated_at 
-                    DESC";
+            $sql = "SELECT n.*, category , r.average_rating
+                    FROM novels AS n 
+                    JOIN categories AS c
+                    ON n.category_id = c.id 
+                    LEFT JOIN (SELECT novel_id, AVG(rating) AS average_rating FROM ratings GROUP BY novel_id) AS r
+                    ON r.novel_id= n.id
+                    ORDER BY updated_at DESC";
 
             $stmt = $db->query($sql);
 

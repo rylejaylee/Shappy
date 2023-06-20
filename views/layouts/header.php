@@ -11,6 +11,19 @@
     <!-- Google Fonts Roboto -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
     <link rel="stylesheet" href="<?php echo asset('css/main.css') ?>">
+    <style>
+        .novel-card {
+            width: 200px !important;
+            height: 300px !important;
+        }
+
+        @media only screen and (max-width: 490px) {
+            .novel-card {
+                width: 180px !important;
+                height: 300px !important;
+            }
+        }
+    </style>
 </head>
 
 <body class="bg-light">

@@ -30,3 +30,7 @@ $router->addRoute('GET', '/chapters/fetch', 'ChaptersController@fetch');
 $router->addRoute('POST', '/reviews/store', 'ReviewsController@store');
 $router->addRoute('POST', '/reviews/update', 'ReviewsController@update');
 $router->addRoute('POST', '/reviews/delete', 'ReviewsController@delete');
+// ratings routes
+$router->addRoute('POST', '/rating/store', 'RatingsController@store');
+$router->addRoute('POST', '/rating/update', 'RatingsController@update');
+$router->addRoute('POST', '/rating/user_rating', 'RatingsController@user_rating');

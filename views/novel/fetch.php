@@ -50,7 +50,7 @@
 
                 <div class="d-flex justify-content-center">
                     <div class="image-container">
-                        <img src="<?php echo $novel->img ? img($novel->img) : img('novel_cover_default.png') ?>" alt="<?php echo $novel->title ?>" height="170" width="120">
+                        <img src="<?php echo $novel->img ? img($novel->img) : img('novel_cover_default.png') ?>" alt="<?php echo $novel->title ?>" class="img-thumbnail" style="height:260px; width: 200px">
                         <?php if (is_authorized() && is_owner($novel->user_id)) : ?>
                             <button id="upload_cover" class="edit-button btn btn-primary btn-sm btn-floating m-1">
                                 <i class="fas fa-image"></i>
@@ -59,10 +59,16 @@
                     </div>
                 </div>
                 <div class="text-center">
-                    <div class="my-2"><a href="# " class="btn btn-warning btn-rounded btn-sm"><?php echo $novel->category ?></a></div>
+                    <span class="mt-2 d-flex justify-content-center">
+                        <span class="rating_average" data-stars="<?php echo $novel->ratings_average ?>"></span>
+                    </span>
+                    <small class="text-muted">(<?php echo number_format($novel->ratings_average, 2) ?>/5.00)</small>
                     <div class="my-2"><strong>Title:</strong> <?php echo $novel->title ?></div>
                     <div class="my-2"><strong>Author:</strong> <?php echo $novel->name ?></div>
                     <div class="my-2"><strong>Date created:</strong> <?php echo date('m/d/Y', strtotime($novel->created_at)) ?></div>
+                    <div class="my-2"><strong>Category:</strong>
+                        <a href="# " class="btn btn-success btn-rounded btn-sm"><?php echo $novel->category ?></a>
+                    </div>
                 </div>
                 <hr class="hr">
                 <h3>Summary</h3>
@@ -107,8 +113,85 @@
                     <h5 class="text-muted text-center bg-light p-3">No chapters added yet.</h5>
                 <?php endif; ?>
 
-                <!-- add ratings -->
+                <hr class="hr">
 
+                <!-- add ratings -->
+                <div class="my-3 row">
+                    <div class="col-md-8 col-lg-6 col-xl-5">
+                        <h3 class="mb-4">Ratings</h3>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mt-2">5
+                                <?php for ($i = 1; $i <= 5; $i++) {
+                                    echo "<i class='fas fa-star text-warning me-2'></i>";
+                                } ?>
+                            </h5>
+                            <small class="text-muted">(<?php echo $ratings['rating_5'] ?> votes)</small>
+                        </div>
+
+                        <div class="progress mt-2">
+                            <div class="progress-bar" role="progressbar" style="width: <?php echo $_ratings['rating_5'] ?>%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mt-2">4
+                                <?php for ($i = 1; $i <= 4; $i++) {
+                                    echo "<i class='fas fa-star text-warning me-2'></i>";
+                                } ?>
+                            </h5>
+                            <small class="text-muted">(<?php echo $ratings['rating_4'] ?> votes)</small>
+                        </div>
+                        <div class="progress mt-2">
+                            <div class="progress-bar" role="progressbar" style="width: <?php echo $_ratings['rating_4'] ?>%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mt-2">3
+                                <?php for ($i = 1; $i <= 3; $i++) {
+                                    echo "<i class='fas fa-star text-warning me-2'></i>";
+                                } ?>
+                            </h5>
+                            <small class="text-muted">(<?php echo $ratings['rating_3'] ?> votes)</small>
+                        </div>
+                        <div class="progress mt-2">
+                            <div class="progress-bar" role="progressbar" style="width: <?php echo $_ratings['rating_3'] ?>%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mt-2">2
+                                <?php for ($i = 1; $i <= 2; $i++) {
+                                    echo "<i class='fas fa-star text-warning me-2'></i>";
+                                } ?>
+                            </h5>
+                            <small class="text-muted">(<?php echo $ratings['rating_2'] ?> votes)</small>
+                        </div>
+                        <div class="progress mt-2">
+                            <div class="progress-bar" role="progressbar" style="width: <?php echo $_ratings['rating_2'] ?>%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mt-2">1
+                                <?php for ($i = 1; $i <= 1; $i++) {
+                                    echo "<i class='fas fa-star text-warning me-2'></i>";
+                                } ?>
+                            </h5>
+                            <small class="text-muted">(<?php echo $ratings['rating_1'] ?> votes)</small>
+                        </div>
+                        <div class="progress mt-2">
+                            <div class="progress-bar" role="progressbar" style="width: <?php echo $_ratings['rating_1'] ?>%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <?php if (is_authorized()) : ?>
+                            <button class="btn btn-warning mt-2" id="btn_rating">Rate Novel</button>
+                        <?php else : ?>
+                            <a href="<?php echo url('auth/login') ?>">Login to rate novel</a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <hr class="hr">
                 <!-- reviews -->
 
                 <h3>Comments</h3>
@@ -129,7 +212,7 @@
                         </div>
                     </form>
                 <?php else : ?>
-                    <a href="<?php echo url('auth/login') ?>">Login to add review</a>
+                    <a href="<?php echo url('auth/login') ?>">Login to add comment</a>
                 <?php endif; ?>
 
                 <hr class="hr">
@@ -151,10 +234,11 @@
 </div>
 
 <div class="modal fade" id="delete_modal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
                 <h5><i class="fas fa-warning"></i> Confirm delete</h5>
+                <hr class="hr">
                 <p>Are you sure you want to delete this novel?</p>
                 <hr class="hr">
                 <div class="d-flex justify-content-center">
@@ -167,7 +251,7 @@
 </div>
 
 <div class="modal fade" id="upload_cover_modal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
                 <h5><i class="fas fa-image"></i> Upload new cover</h5>
@@ -189,10 +273,67 @@
     </div>
 </div>
 
+<div class="modal fade" id="rating_modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h5><i class="fas fa-face-smile"></i> Rate novel</h5>
+                <hr class="hr">
+
+                <form id="rating_form" data-method="post">
+                    <p class="text-center" id="rating_text">Add you rating to novel, <strong><?php echo $novel->title ?></strong>!</p>
+                    <input type="hidden" name="novel_id" value="<?php echo $novel->id ?>">
+                    <input type="hidden" name="rating_id" value="0">
+                    <div class="d-flex justify-content-center">
+                        <div class="rating">
+                            <label>
+                                <input type="radio" name="stars" value="1" />
+                                <span class="icon"><i class="fas fa-star"></i></span>
+                            </label>
+                            <label>
+                                <input type="radio" name="stars" value="2" />
+                                <span class="icon"><i class="fas fa-star"></i></span>
+                                <span class="icon"><i class="fas fa-star"></i></span>
+                            </label>
+                            <label>
+                                <input type="radio" name="stars" value="3" />
+                                <span class="icon"><i class="fas fa-star"></i></span>
+                                <span class="icon"><i class="fas fa-star"></i></span>
+                                <span class="icon"><i class="fas fa-star"></i></span>
+                            </label>
+                            <label>
+                                <input type="radio" name="stars" value="4" />
+                                <span class="icon"><i class="fas fa-star"></i></span>
+                                <span class="icon"><i class="fas fa-star"></i></span>
+                                <span class="icon"><i class="fas fa-star"></i></span>
+                                <span class="icon"><i class="fas fa-star"></i></span>
+                            </label>
+                            <label>
+                                <input type="radio" name="stars" value="5" />
+                                <span class="icon"><i class="fas fa-star"></i></span>
+                                <span class="icon"><i class="fas fa-star"></i></span>
+                                <span class="icon"><i class="fas fa-star"></i></span>
+                                <span class="icon"><i class="fas fa-star"></i></span>
+                                <span class="icon"><i class="fas fa-star"></i></span>
+                            </label>
+                        </div>
+                    </div>
+                    <br />
+                    <button type="submit" class="btn btn-primary btn mt-2 btn-block" id="rating_btn">Add Rating</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 <?php include_once 'views/layouts/footer.php' ?>
 
 <script>
     $(document).ready(() => {
+        add_rating_stars();
+
         $("#delete_form").submit(function(e) {
             e.preventDefault();
             $("#delete_modal").modal('show');
@@ -231,5 +372,80 @@
                 }
             })
         })
+
+        $("#btn_rating").click(function() {
+            data = {
+                'novel_id': <?php echo $novel->id ?>
+            }
+
+            $.post("<?php echo url('rating/user_rating') ?>", data, response => {
+                // console.log(response)
+                rating = JSON.parse(response);
+                rate = rating['rating']
+                rating_id = rating['id']
+                if (Number(rate)) {
+                    $(`input[name="stars"][value="${rate}"]`).prop('checked', true)
+                    $(`input[name="rating_id"]`).val(rating_id)
+                    $('#rating_form').data('method', 'update');
+                    $('#rating_btn').text('Update Rating');
+                    $('#rating_text').text(`You have already rated this novel with ${rate} stars...`);
+
+                }
+            }).fail((xhr, status, error) => {
+                console.log(xhr.responseText);
+            });
+
+            $("#rating_modal").modal('show')
+        })
+
+        $("#rating_form").submit(function(e) {
+            e.preventDefault();
+            data = $(this).serialize();
+            method = $('#rating_form').data('method');
+
+            if (method == 'post') {
+                $.post("<?php echo url('rating/store') ?>", data, response => {
+
+                    window.location = '<?php echo url("novel/fetch?novel=$novel->slug") ?>';
+
+                }).fail((xhr, status, error) => {
+                    console.log(xhr.responseText);
+                });
+            } else if (method == 'update') {
+                $.post("<?php echo url('rating/update') ?>", data, response => {
+
+                    window.location = '<?php echo url("novel/fetch?novel=$novel->slug") ?>';
+
+                }).fail((xhr, status, error) => {
+                    console.log(xhr.responseText);
+                });
+            }
+
+        })
+
+        function add_rating_stars() {
+            let rating_average = $(".rating_average")
+
+            let stars_data = rating_average.attr('data-stars')
+            let stars = stars_data.split('.');
+
+            result = '';
+            // add the full stars
+            for (let index = 0; index < Number(stars[0]); index++) {
+                result += '<i class="fas fa-star text-warning me-2"></i>';
+            }
+            // add the half star
+            if (Number(stars[1] > 0)) {
+                result += '<i class="fas fa-star-half-stroke text-warning me-2"></i>';
+            }
+
+            // add the blank stars
+            let blank_stars = Math.floor(5.0 - stars_data)
+            for (let index = 0; index < blank_stars; index++) {
+                result += '<i class="fa-regular fa-star text-warning me-2"></i>';
+            }
+
+            rating_average.html(result);
+        }
     })
 </script>

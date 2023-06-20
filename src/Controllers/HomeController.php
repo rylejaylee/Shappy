@@ -12,9 +12,7 @@ class HomeController extends Controller
         $novel = new Novel;
 
         $novels = $novel->fetch_all();
-
-        $one = $novels[0];
-
-        return $this->view('home', ['data' => ['novels' => $novels]]);
+        
+        return $this->view('home', ['novels' => $novels]);
     }
 }
