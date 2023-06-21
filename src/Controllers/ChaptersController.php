@@ -79,7 +79,7 @@ class ChaptersController extends Controller
         if (!$chapter) error_404();
 
         Guard::owner($chapter->user_id);
-        
+
         return $this->view('/chapters/edit', ['chapter' => $chapter]);
     }
 
@@ -99,7 +99,7 @@ class ChaptersController extends Controller
 
         $this->validator->title($title);
         $this->validator->empty($content, 'Content');
-        
+
         if ($this->validator->has_error()) {
             $this->flash('error', $this->validator->get_error());
             return $this->redirect('/chapters/edit?id=' . $chapter->id);
@@ -122,9 +122,15 @@ class ChaptersController extends Controller
 
         Guard::owner($chapter->user_id);
 
+        $novel = $this->novel->get_by_id($chapter->novel_id);
+        $slug = $novel ? $novel->slug : 0;
+
         if ($this->chapter->delete($chapter->id)) {
             $this->flash('success', 'Congrats! You have deleted a chapter.');
-            echo 1;
+            echo $slug;
+            exit;
         }
+
+        echo 0;
     }
 }

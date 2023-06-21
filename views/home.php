@@ -58,10 +58,11 @@ function status_color($status)
                             </a>
                         </div>
                     <?php endforeach; ?>
+                </div>
 
-                    <div class="d-flex justify-content-center p-2 bg-light w-100">
-                        <a href="<?php echo url('novels/new') ?>" class="text-primary">View All</a>
-                    </div>
+
+                <div class="d-flex justify-content-center p-2 bg-light w-100">
+                    <a href="<?php echo url('novels/new') ?>" class="text-primary">View All</a>
                 </div>
             </div>
         </div>

@@ -8,7 +8,7 @@
     <div class="col-lg-4">
         <div class="card mt-5">
             <div class="card-body">
-                <h1 class="card-title text-primary text-center">Create Novel</h1>
+                <h1 class="card-title text-primary text-center">Update Novel</h1>
                 <hr class="hr">
                 <?php if (session()->has('error')) { ?>
                     <div class="alert alert-danger d-flex align-items-center" role="alert">

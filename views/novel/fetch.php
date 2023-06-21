@@ -16,6 +16,12 @@
                     <?php if (is_authorized() && is_owner($novel->user_id)) : ?>
                         <div>
                             <div class="d-flex">
+
+                                <div class="d-flex justify-content-end">
+                                    <a href="<?php echo url("chapters/create?novel_id=$novel->id") ?>" class="btn btn-sm btn-primary me-2">
+                                        <i class="fas fa-add"></i> New Chapter
+                                    </a>
+                                </div>
                                 <a href="<?php echo url("novel/edit?id=$novel->id") ?>" class="btn btn-sm btn-primary btn-floating me-2">
                                     <i class="fas fa-edit"></i>
                                 </a>
@@ -58,178 +64,194 @@
                         <?php endif; ?>
                     </div>
                 </div>
-                <div class="text-center">
+                <div class="text-center mt-2">
+                    <h5 class="fw-bold"><?php echo $novel->title ?></h5>
                     <span class="mt-2 d-flex justify-content-center">
                         <span class="rating_average" data-stars="<?php echo $novel->ratings_average ?>"></span>
                     </span>
                     <small class="text-muted">(<?php echo number_format($novel->ratings_average, 2) ?>/5.00)</small>
-                    <div class="my-2"><strong>Title:</strong> <?php echo $novel->title ?></div>
-                    <div class="my-2"><strong>Author:</strong> <?php echo $novel->name ?></div>
-                    <div class="my-2"><strong>Date created:</strong> <?php echo date('m/d/Y', strtotime($novel->created_at)) ?></div>
-                    <div class="my-2"><strong>Status:</strong> <?php echo $novel->status ?></div>
-                    <div class="my-2"><strong>Chapters:</strong> <?php echo count($chapters) ?></div>
-                    <div class="my-2"><strong>Category:</strong>
-                        <a href="# " class="btn btn-success btn-rounded btn-sm"><?php echo $novel->category ?></a>
-                    </div>
                 </div>
-                <hr class="hr">
-                <h3>Summary</h3>
-                <p>
-                    <?php echo $novel->description ?>
-                </p>
 
+                <!-- Tabs navs -->
+                <ul class="nav nav-tabs nav-justified mb-3" id="ex1" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="ex3-tab-1" data-mdb-toggle="tab" href="#ex3-tabs-1" role="tab" aria-controls="ex3-tabs-1" aria-selected="true">Details</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="ex3-tab-2" data-mdb-toggle="tab" href="#ex3-tabs-2" role="tab" aria-controls="ex3-tabs-2" aria-selected="false">Chapters</a>
+                    </li>
+                </ul>
+                <!-- Tabs navs -->
 
-                <hr class="hr">
-                <?php if (is_authorized() && is_owner($novel->user_id)) : ?>
-                    <div class="d-flex justify-content-end">
-                        <a href="<?php echo url("chapters/create?novel_id=$novel->id") ?>" class="btn btn-primary">
-                            <i class="fas fa-add"></i> New Chapter
-                        </a>
-                    </div>
-                <?php endif; ?>
+                <!-- Tabs content -->
+                <div class="tab-content" id="ex2-content">
+                    <!-- tab details -->
+                    <div class="tab-pane fade show active" id="ex3-tabs-1" role="tabpanel" aria-labelledby="ex3-tab-1">
 
-
-                <!-- list of chapters -->
-                <?php if (count($chapters)) : ?>
-                    <?php foreach ($chapters as $chapter) : ?>
-                        <div class="d-flex justify-content-between align-items-center bg-light mt-2">
-                            <div class="p-2  my-2">
-                                <a href="<?php echo url("chapters/fetch?id=$chapter->id") ?>" class="text-dark">
-                                    <span class="text-primary fw-bold"><?php echo $chapter->title ?></span>
-                                    <small class="text-muted"><?php echo hummanDiff($chapter->updated_at) ?></small>
-                                </a>
-
+                        <div class="text-center">
+                            <div class="my-2"><strong>Title:</strong> <?php echo $novel->title ?></div>
+                            <div class="my-2"><strong>Author:</strong> <?php echo $novel->name ?></div>
+                            <div class="my-2"><strong>Date created:</strong> <?php echo date('m/d/Y', strtotime($novel->created_at)) ?></div>
+                            <div class="my-2"><strong>Status:</strong> <?php echo $novel->status ?></div>
+                            <div class="my-2"><strong>Chapters:</strong> <?php echo count($chapters) ?></div>
+                            <div class="my-2"><strong>Category:</strong>
+                                <a href="# " class="btn btn-success btn-rounded btn-sm"><?php echo $novel->category ?></a>
                             </div>
-                            <?php if (is_authorized() && is_owner($novel->user_id)) : ?>
-                                <div>
-                                    <div class="d-flex">
-                                        <a href="<?php echo url("chapters/edit?id=$chapter->id") ?>" class="btn btn-sm btn-outline-primary btn-floating me-2">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
+                        </div>
+
+                        <hr class="hr">
+                        <h3>Summary</h3>
+                        <p>
+                            <?php echo $novel->description ?>
+                        </p>
+
+                        <!-- add ratings -->
+                        <hr class="hr">
+                        <div class="my-3 row">
+                            <div class="col-md-8 col-lg-6 col-xl-5">
+                                <h3 class="mb-4">Ratings</h3>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mt-2">5
+                                        <?php for ($i = 1; $i <= 5; $i++) {
+                                            echo "<i class='fas fa-star text-warning me-2'></i>";
+                                        } ?>
+                                    </h5>
+                                    <small class="text-muted">(<?php echo $ratings['rating_5'] ?> votes)</small>
+                                </div>
+
+                                <div class="progress mt-2">
+                                    <div class="progress-bar" role="progressbar" style="width: <?php echo $_ratings['rating_5'] ?>%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
                                     </div>
                                 </div>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mt-2">4
+                                        <?php for ($i = 1; $i <= 4; $i++) {
+                                            echo "<i class='fas fa-star text-warning me-2'></i>";
+                                        } ?>
+                                    </h5>
+                                    <small class="text-muted">(<?php echo $ratings['rating_4'] ?> votes)</small>
+                                </div>
+                                <div class="progress mt-2">
+                                    <div class="progress-bar" role="progressbar" style="width: <?php echo $_ratings['rating_4'] ?>%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mt-2">3
+                                        <?php for ($i = 1; $i <= 3; $i++) {
+                                            echo "<i class='fas fa-star text-warning me-2'></i>";
+                                        } ?>
+                                    </h5>
+                                    <small class="text-muted">(<?php echo $ratings['rating_3'] ?> votes)</small>
+                                </div>
+                                <div class="progress mt-2">
+                                    <div class="progress-bar" role="progressbar" style="width: <?php echo $_ratings['rating_3'] ?>%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mt-2">2
+                                        <?php for ($i = 1; $i <= 2; $i++) {
+                                            echo "<i class='fas fa-star text-warning me-2'></i>";
+                                        } ?>
+                                    </h5>
+                                    <small class="text-muted">(<?php echo $ratings['rating_2'] ?> votes)</small>
+                                </div>
+                                <div class="progress mt-2">
+                                    <div class="progress-bar" role="progressbar" style="width: <?php echo $_ratings['rating_2'] ?>%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mt-2">1
+                                        <?php for ($i = 1; $i <= 1; $i++) {
+                                            echo "<i class='fas fa-star text-warning me-2'></i>";
+                                        } ?>
+                                    </h5>
+                                    <small class="text-muted">(<?php echo $ratings['rating_1'] ?> votes)</small>
+                                </div>
+                                <div class="progress mt-2">
+                                    <div class="progress-bar" role="progressbar" style="width: <?php echo $_ratings['rating_1'] ?>%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <?php if (is_authorized()) : ?>
+                                    <button class="btn btn-warning mt-2" id="btn_rating">Rate Novel</button>
+                                <?php else : ?>
+                                    <a href="<?php echo url('auth/login') ?>">Login to rate novel</a>
+                                <?php endif; ?>
+                            </div>
+
+
+                            <!-- comments -->
+                            <hr class="hr mt-5">
+                            <h3>Comments</h3>
+                            <?php if (session()->has('error')) : ?>
+                                <p class="text-danger"><?php echo session()->get('error') ?></p>
+                            <?php endif; ?>
+
+                            <?php if (is_authorized()) : ?>
+                                <form action="<?php echo url('reviews/store') ?>" method="POST">
+                                    <div class="form-outline">
+                                        <textarea class="form-control" name="comment" id="comment" rows="4" placeholder="Enter your comment here..."></textarea> <br>
+                                        <label class="form-label" for="comment">Your Comment</label>
+                                    </div>
+
+                                    <input type="hidden" name="novel_id" value="<?php echo $novel->id ?>">
+                                    <div class="d-flex justify-content-end">
+                                        <input type="submit" value="submit" name="submit" class="btn btn-primary mt-3">
+                                    </div>
+                                </form>
+                            <?php else : ?>
+                                <a href="<?php echo url('auth/login') ?>">Login to add comment</a>
+                            <?php endif; ?>
+
+                            <hr class="hr mt-4">
+
+                            <!-- reviews list -->
+                            <?php if (count($reviews)) : ?>
+                                <?php foreach ($reviews as $review) : ?>
+                                    <h5><?php echo $review->name ?></h5>
+                                    <p><?php echo $review->comment ?></p>
+                                    <small><?php echo $review->updated_at ?></small>
+                                    <hr class="hr">
+                                <?php endforeach; ?>
+                            <?php else : ?>
+                                <h5 class="text-muted text-center bg-light p-3">No comments yet.</h5>
                             <?php endif; ?>
                         </div>
-                    <?php endforeach; ?>
-                <?php else : ?>
-                    <h5 class="text-muted text-center bg-light p-3">No chapters added yet.</h5>
-                <?php endif; ?>
+                    </div>
 
-                <hr class="hr">
+                    <!-- tab chapters -->
+                    <div class="tab-pane fade" id="ex3-tabs-2" role="tabpanel" aria-labelledby="ex3-tab-2">
 
-                <!-- add ratings -->
-                <div class="my-3 row">
-                    <div class="col-md-8 col-lg-6 col-xl-5">
-                        <h3 class="mb-4">Ratings</h3>
+                        <!-- list of chapters -->
+                        <?php if (count($chapters)) : ?>
+                            <?php foreach ($chapters as $chapter) : ?>
+                                <div class="d-flex justify-content-between align-items-center bg-light mt-2">
+                                    <div class="p-2  my-2">
+                                        <a href="<?php echo url("chapters/fetch?id=$chapter->id") ?>" class="text-dark">
+                                            <span class="text-primary fw-bold"><?php echo $chapter->title ?></span>
+                                            <small class="text-muted"><?php echo hummanDiff($chapter->updated_at) ?></small>
+                                        </a>
 
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mt-2">5
-                                <?php for ($i = 1; $i <= 5; $i++) {
-                                    echo "<i class='fas fa-star text-warning me-2'></i>";
-                                } ?>
-                            </h5>
-                            <small class="text-muted">(<?php echo $ratings['rating_5'] ?> votes)</small>
-                        </div>
-
-                        <div class="progress mt-2">
-                            <div class="progress-bar" role="progressbar" style="width: <?php echo $_ratings['rating_5'] ?>%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mt-2">4
-                                <?php for ($i = 1; $i <= 4; $i++) {
-                                    echo "<i class='fas fa-star text-warning me-2'></i>";
-                                } ?>
-                            </h5>
-                            <small class="text-muted">(<?php echo $ratings['rating_4'] ?> votes)</small>
-                        </div>
-                        <div class="progress mt-2">
-                            <div class="progress-bar" role="progressbar" style="width: <?php echo $_ratings['rating_4'] ?>%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mt-2">3
-                                <?php for ($i = 1; $i <= 3; $i++) {
-                                    echo "<i class='fas fa-star text-warning me-2'></i>";
-                                } ?>
-                            </h5>
-                            <small class="text-muted">(<?php echo $ratings['rating_3'] ?> votes)</small>
-                        </div>
-                        <div class="progress mt-2">
-                            <div class="progress-bar" role="progressbar" style="width: <?php echo $_ratings['rating_3'] ?>%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mt-2">2
-                                <?php for ($i = 1; $i <= 2; $i++) {
-                                    echo "<i class='fas fa-star text-warning me-2'></i>";
-                                } ?>
-                            </h5>
-                            <small class="text-muted">(<?php echo $ratings['rating_2'] ?> votes)</small>
-                        </div>
-                        <div class="progress mt-2">
-                            <div class="progress-bar" role="progressbar" style="width: <?php echo $_ratings['rating_2'] ?>%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mt-2">1
-                                <?php for ($i = 1; $i <= 1; $i++) {
-                                    echo "<i class='fas fa-star text-warning me-2'></i>";
-                                } ?>
-                            </h5>
-                            <small class="text-muted">(<?php echo $ratings['rating_1'] ?> votes)</small>
-                        </div>
-                        <div class="progress mt-2">
-                            <div class="progress-bar" role="progressbar" style="width: <?php echo $_ratings['rating_1'] ?>%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <?php if (is_authorized()) : ?>
-                            <button class="btn btn-warning mt-2" id="btn_rating">Rate Novel</button>
+                                    </div>
+                                    <?php if (is_authorized() && is_owner($novel->user_id)) : ?>
+                                        <div>
+                                            <div class="d-flex">
+                                                <a href="<?php echo url("chapters/edit?id=$chapter->id") ?>" class="btn btn-sm btn-outline-primary btn-floating me-2">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
                         <?php else : ?>
-                            <a href="<?php echo url('auth/login') ?>">Login to rate novel</a>
+                            <h5 class="text-muted text-center bg-light p-3">No chapters added yet.</h5>
                         <?php endif; ?>
                     </div>
                 </div>
-
-                <hr class="hr">
-                <!-- reviews -->
-
-                <h3>Comments</h3>
-                <?php if (session()->has('error')) : ?>
-                    <p class="text-danger"><?php echo session()->get('error') ?></p>
-                <?php endif; ?>
-
-                <?php if (is_authorized()) : ?>
-                    <form action="<?php echo url('reviews/store') ?>" method="POST">
-                        <div class="form-outline">
-                            <textarea class="form-control" name="comment" id="comment" rows="4" placeholder="Enter your comment here..."></textarea> <br>
-                            <label class="form-label" for="comment">Your Comment</label>
-                        </div>
-
-                        <input type="hidden" name="novel_id" value="<?php echo $novel->id ?>">
-                        <div class="d-flex justify-content-end">
-                            <input type="submit" value="submit" name="submit" class="btn btn-primary mt-3">
-                        </div>
-                    </form>
-                <?php else : ?>
-                    <a href="<?php echo url('auth/login') ?>">Login to add comment</a>
-                <?php endif; ?>
-
-                <hr class="hr">
-
-                <!-- reviews list -->
-                <?php if (count($reviews)) : ?>
-                    <?php foreach ($reviews as $review) : ?>
-                        <h5><?php echo $review->name ?></h5>
-                        <p><?php echo $review->comment ?></p>
-                        <small><?php echo $review->updated_at ?></small>
-                        <hr>
-                    <?php endforeach; ?>
-                <?php else : ?>
-                    <h5 class="text-muted text-center bg-light p-3">No comments yet.</h5>
-                <?php endif; ?>
+                <!-- Tabs content -->
             </div>
         </div>
     </div>
