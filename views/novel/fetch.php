@@ -66,6 +66,8 @@
                     <div class="my-2"><strong>Title:</strong> <?php echo $novel->title ?></div>
                     <div class="my-2"><strong>Author:</strong> <?php echo $novel->name ?></div>
                     <div class="my-2"><strong>Date created:</strong> <?php echo date('m/d/Y', strtotime($novel->created_at)) ?></div>
+                    <div class="my-2"><strong>Status:</strong> <?php echo $novel->status ?></div>
+                    <div class="my-2"><strong>Chapters:</strong> <?php echo count($chapters) ?></div>
                     <div class="my-2"><strong>Category:</strong>
                         <a href="# " class="btn btn-success btn-rounded btn-sm"><?php echo $novel->category ?></a>
                     </div>

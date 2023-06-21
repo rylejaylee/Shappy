@@ -11,8 +11,8 @@ class HomeController extends Controller
     {
         $novel = new Novel;
 
-        $novels = $novel->fetch_all();
-        
+        $novels = $novel->fetch_all(4);
+    
         return $this->view('home', ['novels' => $novels]);
     }
 }

@@ -60,7 +60,7 @@ function status_color($status)
                     <?php endforeach; ?>
 
                     <div class="d-flex justify-content-center p-2 bg-light w-100">
-                        <a href="<?php echo url('novels/new') ?>" class="text-primary">View All</a>
+                       <nav><?php echo $links ?></nav>
                     </div>
                 </div>
             </div>

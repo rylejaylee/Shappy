@@ -56,7 +56,7 @@ class Novel
         return 0;
     }
 
-    public function fetch_all()
+    public function fetch_all($limit = 0, $offset = 0)
     {
         try {
             $db = new Database;
@@ -66,7 +66,13 @@ class Novel
                     ON n.category_id = c.id 
                     LEFT JOIN (SELECT novel_id, AVG(rating) AS average_rating FROM ratings GROUP BY novel_id) AS r
                     ON r.novel_id= n.id
-                    ORDER BY updated_at DESC";
+                    ORDER BY updated_at DESC ";
+
+            if ($limit)
+                $sql .= "LIMIT $limit ";
+
+            if ($offset)
+                $sql .=  "OFFSET $offset";
 
             $stmt = $db->query($sql);
 
@@ -119,7 +125,7 @@ class Novel
     {
         try {
             $db = new Database;
-            $sql = "SELECT n.id, user_id, title, description, img, slug, n.created_at, n.updated_at, u.name, u.email, category
+            $sql = "SELECT n.id, user_id, title, description, img, slug, n.created_at, n.updated_at, n.status, u.name, u.email, category
                     FROM novels as n
                     INNER JOIN users as u
                     ON n.user_id = u.id
@@ -162,6 +168,20 @@ class Novel
             $db->close();
 
             return 1;
+        } catch (Exception $e) {
+            echo "ERROR 500 : " . $e->getMessage();
+        }
+    }
+
+    public function count()
+    {
+        try {
+            $db = new Database;
+            $sql = "SELECT COUNT(*) as count FROM novels";
+            $stmt = $db->query($sql);
+            $db->close();
+
+            return $stmt->fetch();
         } catch (Exception $e) {
             echo "ERROR 500 : " . $e->getMessage();
         }

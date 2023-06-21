@@ -8,6 +8,11 @@
   top: 0;
   right: 0;
 }
+.novel-status {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
 
 .rating {
   display: inline-block;

@@ -34,3 +34,5 @@ $router->addRoute('POST', '/reviews/delete', 'ReviewsController@delete');
 $router->addRoute('POST', '/rating/store', 'RatingsController@store');
 $router->addRoute('POST', '/rating/update', 'RatingsController@update');
 $router->addRoute('POST', '/rating/user_rating', 'RatingsController@user_rating');
+// pages routes
+$router->addRoute('GET', '/novels/new', 'PagesController@new_novels');

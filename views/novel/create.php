@@ -27,8 +27,8 @@
                         <input type="text" class="form-control" placeholder="Your new novel title" name="title" value="<?php echo old('title') ?? '' ?>">
                     </div>
                     <div class="mb-3">
-                        <label for="exampleFormControlTextarea1" class="form-label">Summary</label>
-                        <textarea class="form-control" id="editor" name="desc" rows="3"></textarea>
+                        <label class="form-label">Summary</label>
+                        <textarea class="form-control" id="editor" name="desc" rows="3"><?php echo old('desc') ?? '' ?></textarea>
                     </div>
                     <select class="form-select" aria-label="Default select example" name="category">
                         <option selected value="">Select Category</option>
@@ -50,7 +50,7 @@
     tinymce.init({
         selector: 'textarea#editor',
         skin: 'bootstrap',
-        plugins: 'lists, link, image, media',
+        plugins: 'lists, link, image, media, emoticons',
         toolbar: 'h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link image media | removeformat help',
         menubar: false,
     });

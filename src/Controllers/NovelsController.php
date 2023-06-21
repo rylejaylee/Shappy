@@ -88,7 +88,7 @@ class NovelsController extends Controller
             }
         }
         // dd($_ratings);
-      
+
         return $this->view("novel/fetch", [
             'novel' => $novel,
             'chapters' => $chapters,
@@ -253,4 +253,5 @@ class NovelsController extends Controller
             echo 0;
         }
     }
+
 }
