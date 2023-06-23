@@ -31,7 +31,7 @@ class ChaptersController extends Controller
         if (!$novel) return error_404();
 
         $count = $this->chapter->count_by_novel_id($novel->id);
-        $limit = 2;
+        $limit = 4;
         $pagination = new Pagination($count, $limit);
         $chapters = $this->chapter->get_all_by_novel_id($novel->id, $limit, $pagination->getOffset());
         $links = $pagination->getPaginationLinks();
@@ -63,9 +63,9 @@ class ChaptersController extends Controller
         $is_prev_exist = $chapters[0]->id != $chapter->id; 
 
         $chapter->is_next = $is_next_exist;
-        $chapter->is_prev = $is_prev_exist;
+        $chapter->is_prev = $is_prev_exist; 
       
-        return $this->view('chapters/fetch', ['chapter' => $chapter]);
+        return $this->view('chapters/fetch', ['chapter' => $chapter, 'chapters' => $chapters]);
     }
 
     public function next(Request $request)

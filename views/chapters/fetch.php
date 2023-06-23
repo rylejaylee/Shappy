@@ -36,7 +36,7 @@
 
                 <p><?php echo $chapter->content ?></p>
 
-                <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between align-items-center">
                     <?php if ($chapter->is_prev) : ?>
                         <a href="<?php echo url("chapters/fetch_prev?novel=$chapter->novel_id&chapter=$chapter->id") ?>" class="btn btn-primary">
                             <i class="fas fa-angles-left"></i>
@@ -45,15 +45,23 @@
                         <button disabled class="btn btn-primary"> <i class="fas fa-angles-left"></i></button>
                     <?php endif; ?>
 
+                    <form action="">
+                        <select name="chapter" id="chapter_nav" class="form-select">
+                            <?php foreach ($chapters as $_chapter) : ?>
+                                <option value="<?php echo $_chapter->id ?>" <?php echo $_chapter->id == $chapter->id ? 'selected' : null ?>><?php echo $_chapter->title ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </form>
+
+
                     <?php if ($chapter->is_next) : ?>
                         <a href="<?php echo url("chapters/fetch_next?novel=$chapter->novel_id&chapter=$chapter->id") ?>" class="btn btn-primary">
-                        <i class="fas fa-angles-right"></i>
-                    </a>
+                            <i class="fas fa-angles-right"></i>
+                        </a>
                     <?php else : ?>
                         <button disabled class="btn btn-primary"> <i class="fas fa-angles-right"></i></button>
                     <?php endif; ?>
 
-                   
                 </div>
             </div>
         </div>
@@ -87,6 +95,11 @@
 
 <script>
     $(document).ready(function() {
+        $("#chapter_nav").change(function() {
+           const id = $(this).val();
+
+           window.location = "<?php echo url('chapters/fetch?id=') ?>" + id;
+        })
 
         $("#btn_delete").click(function() {
             $("#delete_modal").modal("show")

@@ -168,7 +168,7 @@ class Chapter
     {
         try {
             $db = new Database;
-            $sql = "SELECT id 
+            $sql = "SELECT id, title 
                     FROM chapters 
                     WHERE novel_id = :novel_id ";
 
