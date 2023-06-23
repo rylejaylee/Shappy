@@ -10,6 +10,7 @@ use Shappy\Models\Novel;
 use Shappy\Models\Rating;
 use Shappy\Models\Review;
 use Shappy\Utils\Guard;
+use Shappy\Utils\Pagination;
 use Shappy\Utils\Validator;
 
 class NovelsController extends Controller
@@ -28,8 +29,11 @@ class NovelsController extends Controller
 
         $novel = $this->novel->get_by_slug_with_user($slug);
 
+        if(!$novel) return error_404();
+        
         $chapter = new Chapter;
         $chapters = $chapter->get_all_by_novel_id($novel->id);
+
 
         $review = new Review;
         $reviews = $review->get_all_by_novel_id($novel->id);
@@ -43,7 +47,7 @@ class NovelsController extends Controller
 
         // add new property on novel object
         $novel->ratings_average = floatval($ratings_average);
-      
+
         $_ratings = [
             'rating_5' => 0,
             'rating_4' => 0,
@@ -63,23 +67,23 @@ class NovelsController extends Controller
         foreach ($ratings_data as $rating) {
             switch ($rating->rating) {
                 case 5:
-                    $_ratings['rating_5'] = ($rating->rating_count/$ratings_count) * 100;
+                    $_ratings['rating_5'] = ($rating->rating_count / $ratings_count) * 100;
                     $ratings['rating_5'] = $rating->rating_count;
                     break;
                 case 4:
-                    $_ratings['rating_4'] = ($rating->rating_count/$ratings_count) * 100;
+                    $_ratings['rating_4'] = ($rating->rating_count / $ratings_count) * 100;
                     $ratings['rating_4'] = $rating->rating_count;
                     break;
                 case 3:
-                    $_ratings['rating_3'] = ($rating->rating_count/$ratings_count) * 100;
+                    $_ratings['rating_3'] = ($rating->rating_count / $ratings_count) * 100;
                     $ratings['rating_3'] = $rating->rating_count;
                     break;
                 case 2:
-                    $_ratings['rating_2'] = ($rating->rating_count/$ratings_count) * 100;
+                    $_ratings['rating_2'] = ($rating->rating_count / $ratings_count) * 100;
                     $ratings['rating_2'] = $rating->rating_count;
                     break;
                 case 1:
-                    $_ratings['rating_1'] = ($rating->rating_count/$ratings_count) * 100;
+                    $_ratings['rating_1'] = ($rating->rating_count / $ratings_count) * 100;
                     $ratings['rating_1'] = $rating->rating_count;
                     break;
                 default:
@@ -253,5 +257,4 @@ class NovelsController extends Controller
             echo 0;
         }
     }
-
 }

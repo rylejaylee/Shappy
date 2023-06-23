@@ -246,6 +246,11 @@
                                     <?php endif; ?>
                                 </div>
                             <?php endforeach; ?>
+
+                            <!-- pagination links -->
+                            <div class="d-flex justify-content-center p-2 bg-light w-100">
+                            <a href="<?php echo url('chapters/all?novel='.$novel->slug) ?>" class="text-primary">View All</a>
+                            </div>
                         <?php else : ?>
                             <h5 class="text-muted text-center bg-light p-3">No chapters added yet.</h5>
                         <?php endif; ?>

@@ -7,6 +7,7 @@ use Shappy\Http\Request;
 use Shappy\Models\Chapter;
 use Shappy\Models\Novel;
 use Shappy\Utils\Guard;
+use Shappy\Utils\Pagination;
 use Shappy\Utils\Validator;
 
 class ChaptersController extends Controller
@@ -17,6 +18,22 @@ class ChaptersController extends Controller
         private $chapter = new Chapter,
         private $validator = new Validator
     ) {
+    }
+
+    public function all(Request $request)
+    {
+        $novel_slug = $request->input('novel');
+        $novel = $this->novel->get_by_slug_with_user($novel_slug);
+
+        if(!$novel) return error_404();
+     
+        $count = $this->chapter->count_by_novel_id($novel->id);
+        $limit = 2;
+        $pagination = new Pagination($count, $limit);
+        $chapters = $this->chapter->get_all_by_novel_id($novel->id, $limit, $pagination->getOffset());
+        $links = $pagination->getPaginationLinks();
+
+        return $this->view('chapters/all', ['chapters' => $chapters, 'links' => $links, 'novel' => $novel]);
     }
 
     public function create(Request $request)

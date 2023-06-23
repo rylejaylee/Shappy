@@ -26,6 +26,7 @@ $router->addRoute('GET', '/chapters/edit', 'ChaptersController@edit');
 $router->addRoute('POST', '/chapters/update', 'ChaptersController@update');
 $router->addRoute('POST', '/chapters/delete', 'ChaptersController@delete');
 $router->addRoute('GET', '/chapters/fetch', 'ChaptersController@fetch');
+$router->addRoute('GET', '/chapters/all', 'ChaptersController@all');
 // reviews routes
 $router->addRoute('POST', '/reviews/store', 'ReviewsController@store');
 $router->addRoute('POST', '/reviews/update', 'ReviewsController@update');

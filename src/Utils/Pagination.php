@@ -37,24 +37,36 @@ class Pagination
         $currentPage = $this->getCurrentPage();
 
         $links = '';
+        $queries = '?';
+
+        unset($_GET['page']);
+
+        if(boolval($_GET)){
+            $queries = "?";
+            for ($i=0; $i < count($_GET); $i++) { 
+                $queries .= array_keys($_GET)[$i] . "=" . array_values($_GET)[$i];
+                $queries .= "&";
+            }
+        }
+
 
         if ($totalPages > 1) {
             $links .= '<ul class="pagination">';
 
             if ($currentPage > 1) {
-                $links .= '<li class="page-item "><a class="page-link" href="?page=' . ($currentPage - 1) . '">Previous</a></li>';
+                $links .= '<li class="page-item "><a class="page-link" href="'.$queries.'page=' . ($currentPage - 1) . '">Previous</a></li>';
             }
 
             for ($i = 1; $i <= $totalPages; $i++) {
                 if ($i == $currentPage) {
-                    $links .= '<li class="page-item active"><a class="page-link" href="?page=' . $i . '">' . $i . '</a></li>';
+                    $links .= '<li class="page-item active"><a class="page-link" href="'.$queries.'page=' . $i . '">' . $i . '</a></li>';
                 } else {
-                    $links .= '<li class="page-item"><a class="page-link" href="?page=' . $i . '">' . $i . '</a></li>';
+                    $links .= '<li class="page-item"><a class="page-link" href="'.$queries.'page=' . $i . '">' . $i . '</a></li>';
                 }
             }
 
             if ($currentPage < $totalPages) {
-                $links .= '<li class="page-item"><a class="page-link" href="?page=' . ($currentPage + 1) . '">Next</a></li>';
+                $links .= '<li class="page-item"><a class="page-link" href="'.$queries.'page=' . ($currentPage + 1) . '">Next</a></li>';
             }
 
             $links .= '</ul>';

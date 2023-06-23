@@ -98,13 +98,40 @@ class Chapter
         return 0;
     }
 
-    public function get_all_by_novel_id($novel_id)
+    public function count_by_novel_id($novel_id)
     {
         try {
             $db = new Database;
             $sql = "SELECT * 
                     FROM chapters 
                     WHERE novel_id = :novel_id";
+
+            $params = [
+                ':novel_id' => $novel_id,
+            ];
+
+            $stmt = $db->query($sql, $params);
+            $db->close();
+            return $stmt->rowCount();
+        } catch (Exception $e) {
+            echo "ERROR 500 : " . $e->getMessage();
+        }
+        return 0;
+    }
+
+    public function get_all_by_novel_id($novel_id, $limit = 0, $offset = 0)
+    {
+        try {
+            $db = new Database;
+            $sql = "SELECT * 
+                    FROM chapters 
+                    WHERE novel_id = :novel_id
+                    ORDER BY created_at DESC ";
+
+            if($limit)
+                $sql .= "LIMIT $limit ";
+            if($offset)
+                $sql .= "OFFSET $offset";
 
             $params = [
                 ':novel_id' => $novel_id,
