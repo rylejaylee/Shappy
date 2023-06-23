@@ -13,6 +13,7 @@
                                     <?php echo $chapter->novel_title ?>
                                 </a>
                             </li>
+                            <li class="breadcrumb-item"><a href="<?php echo url('chapters/all?novel=' . $chapter->novel_slug) ?>">Chapters1 List</a></li>
                             <li class="breadcrumb-item "><?php echo $chapter->title ?></li>
                         </ol>
                     </nav>
@@ -36,9 +37,23 @@
                 <p><?php echo $chapter->content ?></p>
 
                 <div class="d-flex justify-content-between">
-                    <button class="btn btn-primary">
-                        << previous</button>
-                            <button class="btn btn-primary">next >></button>
+                    <?php if ($chapter->is_prev) : ?>
+                        <a href="<?php echo url("chapters/fetch_prev?novel=$chapter->novel_id&chapter=$chapter->id") ?>" class="btn btn-primary">
+                            <i class="fas fa-angles-left"></i>
+                        </a>
+                    <?php else : ?>
+                        <button disabled class="btn btn-primary"> <i class="fas fa-angles-left"></i></button>
+                    <?php endif; ?>
+
+                    <?php if ($chapter->is_next) : ?>
+                        <a href="<?php echo url("chapters/fetch_next?novel=$chapter->novel_id&chapter=$chapter->id") ?>" class="btn btn-primary">
+                        <i class="fas fa-angles-right"></i>
+                    </a>
+                    <?php else : ?>
+                        <button disabled class="btn btn-primary"> <i class="fas fa-angles-right"></i></button>
+                    <?php endif; ?>
+
+                   
                 </div>
             </div>
         </div>

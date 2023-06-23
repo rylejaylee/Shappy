@@ -74,19 +74,35 @@ class Chapter
         }
     }
 
-    public function get_by_id($chapter_id)
+    public function get_by_id($chapter_id, $novel_id = 0, $counter = '')
     {
         try {
             $db = new Database;
+            $operation = '=';
+
+            if ($counter == 'next') $operation = '>';
+            elseif ($counter == 'prev') $operation = '<';
+
             $sql = "SELECT c.id, novel_id, c.title, n.title as novel_title, content, c.created_at, c.updated_at, slug as novel_slug, n.user_id
                     FROM chapters as c
                     JOIN novels as n
                     on c.novel_id = n.id
-                    WHERE c.id = :chapter_id";
+                    WHERE c.id $operation :chapter_id ";
+            if ($novel_id)
+                $sql .= "AND c.novel_id = :novel_id ";
+            if ($counter == 'next')
+                $sql .= "LIMIT 1 ";
+            if ($counter == 'prev')
+                $sql .= "ORDER BY c.id DESC LIMIT 1 ";
 
             $params = [
                 ':chapter_id' => $chapter_id,
             ];
+
+            if($novel_id)
+                $params['novel_id'] = $novel_id;
+
+            // dd($sql);
 
             $stmt = $db->query($sql, $params);
             $chapter = $stmt->fetch();
@@ -97,6 +113,7 @@ class Chapter
         }
         return 0;
     }
+
 
     public function count_by_novel_id($novel_id)
     {
@@ -128,10 +145,32 @@ class Chapter
                     WHERE novel_id = :novel_id
                     ORDER BY created_at DESC ";
 
-            if($limit)
+            if ($limit)
                 $sql .= "LIMIT $limit ";
-            if($offset)
+            if ($offset)
                 $sql .= "OFFSET $offset";
+
+            $params = [
+                ':novel_id' => $novel_id,
+            ];
+
+            $stmt = $db->query($sql, $params);
+            $chapters = $stmt->fetchAll();
+            $db->close();
+            return $chapters;
+        } catch (Exception $e) {
+            echo "ERROR 500 : " . $e->getMessage();
+        }
+        return 0;
+    }
+
+    public function get_all_ids($novel_id)
+    {
+        try {
+            $db = new Database;
+            $sql = "SELECT id 
+                    FROM chapters 
+                    WHERE novel_id = :novel_id ";
 
             $params = [
                 ':novel_id' => $novel_id,

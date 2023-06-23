@@ -12,12 +12,15 @@ use Shappy\Utils\Validator;
 
 class ChaptersController extends Controller
 {
+    private $chapter;
+    private $novel;
+    private $validator;
 
-    public function __construct(
-        private $novel = new Novel,
-        private $chapter = new Chapter,
-        private $validator = new Validator
-    ) {
+    public function __construct()
+    {
+        $this->novel = new Novel;
+        $this->chapter = new Chapter;
+        $this->validator = new Validator;
     }
 
     public function all(Request $request)
@@ -25,8 +28,8 @@ class ChaptersController extends Controller
         $novel_slug = $request->input('novel');
         $novel = $this->novel->get_by_slug_with_user($novel_slug);
 
-        if(!$novel) return error_404();
-     
+        if (!$novel) return error_404();
+
         $count = $this->chapter->count_by_novel_id($novel->id);
         $limit = 2;
         $pagination = new Pagination($count, $limit);
@@ -52,10 +55,41 @@ class ChaptersController extends Controller
     public function fetch(Request $request)
     {
         $chapter_id = $request->input('id');
-
+      
         $chapter = $this->chapter->get_by_id($chapter_id);
 
+        $chapters = $this->chapter->get_all_ids($chapter->novel_id);
+        $is_next_exist = $chapters[count($chapters) -1]->id != $chapter->id; 
+        $is_prev_exist = $chapters[0]->id != $chapter->id; 
+
+        $chapter->is_next = $is_next_exist;
+        $chapter->is_prev = $is_prev_exist;
+      
         return $this->view('chapters/fetch', ['chapter' => $chapter]);
+    }
+
+    public function next(Request $request)
+    {
+        $chapter_id = $request->input('chapter');
+        $novel = $request->input('novel');
+
+        $chapter = $this->chapter->get_by_id($chapter_id, $novel, 'next');
+        if (!$chapter) return error_404();
+
+        return $this->redirect("/chapters/fetch?id=$chapter->id");
+    }
+
+
+    public function previous(Request $request)
+    {
+        $chapter_id = $request->input('chapter');
+        $novel = $request->input('novel');
+
+        $chapter = $this->chapter->get_by_id($chapter_id, $novel, 'prev');
+      
+        if (!$chapter) return error_404();
+
+        return $this->redirect("/chapters/fetch?id=$chapter->id");
     }
 
     public function store(Request $request)
