@@ -74,35 +74,77 @@ class Chapter
         }
     }
 
-    public function get_by_id($chapter_id, $novel_id = 0, $counter = '')
+    public function get_first($novel_id)
     {
         try {
             $db = new Database;
-            $operation = '=';
+            $sql = "SELECT id FROM chapters WHERE novel_id=:novel_id LIMIT 1";
 
-            if ($counter == 'next') $operation = '>';
-            elseif ($counter == 'prev') $operation = '<';
+            $params = [
+                ':novel_id'  =>  $novel_id
+            ];
+
+            $stmt = $db->query($sql, $params);
+            $db->close();
+            return $stmt->fetch();
+        } catch (Exception $e) {
+            echo "ERROR 500 : " . $e->getMessage();
+        }
+    }
+
+    public function get_next_id($chapter_id, $novel_id)
+    {
+        try {
+            $db = new Database;
+            $sql = "SELECT id FROM chapters WHERE id > :chapter_id AND novel_id=:novel_id LIMIT 1";
+
+            $params = [
+                ':novel_id'  =>  $novel_id,
+                ':chapter_id'  =>  $chapter_id,
+            ];
+
+            $stmt = $db->query($sql, $params);
+            $db->close();
+            return $stmt->fetch();
+        } catch (Exception $e) {
+            echo "ERROR 500 : " . $e->getMessage();
+        }
+    }
+
+    public function get_prev_id($chapter_id, $novel_id)
+    {
+        try {
+            $db = new Database;
+            $sql = "SELECT id FROM chapters WHERE id < :chapter_id AND novel_id=:novel_id ORDER BY id DESC LIMIT 1";
+
+            $params = [
+                ':novel_id'  =>  $novel_id,
+                ':chapter_id'  =>  $chapter_id,
+            ];
+
+            $stmt = $db->query($sql, $params);
+            $db->close();
+            return $stmt->fetch();
+        } catch (Exception $e) {
+            echo "ERROR 500 : " . $e->getMessage();
+        }
+    }
+
+    public function get_by_id($chapter_id)
+    {
+        try {
+            $db = new Database;
+          
 
             $sql = "SELECT c.id, novel_id, c.title, n.title as novel_title, content, c.created_at, c.updated_at, slug as novel_slug, n.user_id
                     FROM chapters as c
                     JOIN novels as n
                     on c.novel_id = n.id
-                    WHERE c.id $operation :chapter_id ";
-            if ($novel_id)
-                $sql .= "AND c.novel_id = :novel_id ";
-            if ($counter == 'next')
-                $sql .= "LIMIT 1 ";
-            if ($counter == 'prev')
-                $sql .= "ORDER BY c.id DESC LIMIT 1 ";
-
+                    WHERE c.id= :chapter_id ";
+         
             $params = [
                 ':chapter_id' => $chapter_id,
             ];
-
-            if($novel_id)
-                $params['novel_id'] = $novel_id;
-
-            // dd($sql);
 
             $stmt = $db->query($sql, $params);
             $chapter = $stmt->fetch();

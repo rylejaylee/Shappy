@@ -55,17 +55,25 @@ class ChaptersController extends Controller
     public function fetch(Request $request)
     {
         $chapter_id = $request->input('id');
-      
+
         $chapter = $this->chapter->get_by_id($chapter_id);
 
         $chapters = $this->chapter->get_all_ids($chapter->novel_id);
-        $is_next_exist = $chapters[count($chapters) -1]->id != $chapter->id; 
-        $is_prev_exist = $chapters[0]->id != $chapter->id; 
+        $is_next_exist = $chapters[count($chapters) - 1]->id != $chapter->id;
+        $is_prev_exist = $chapters[0]->id != $chapter->id;
 
         $chapter->is_next = $is_next_exist;
-        $chapter->is_prev = $is_prev_exist; 
-      
+        $chapter->is_prev = $is_prev_exist;
+
         return $this->view('chapters/fetch', ['chapter' => $chapter, 'chapters' => $chapters]);
+    }
+
+    public function read_first(Request $request)
+    {
+        $novel = $request->input('novel');
+        $chapter = $this->chapter->get_first($novel);
+
+        return $this->redirect("/chapters/fetch?id=$chapter->id");
     }
 
     public function next(Request $request)
@@ -73,9 +81,8 @@ class ChaptersController extends Controller
         $chapter_id = $request->input('chapter');
         $novel = $request->input('novel');
 
-        $chapter = $this->chapter->get_by_id($chapter_id, $novel, 'next');
-        if (!$chapter) return error_404();
-
+        $chapter = $this->chapter->get_next_id($chapter_id, $novel);
+      
         return $this->redirect("/chapters/fetch?id=$chapter->id");
     }
 
@@ -85,9 +92,7 @@ class ChaptersController extends Controller
         $chapter_id = $request->input('chapter');
         $novel = $request->input('novel');
 
-        $chapter = $this->chapter->get_by_id($chapter_id, $novel, 'prev');
-      
-        if (!$chapter) return error_404();
+        $chapter = $this->chapter->get_prev_id($chapter_id, $novel);
 
         return $this->redirect("/chapters/fetch?id=$chapter->id");
     }

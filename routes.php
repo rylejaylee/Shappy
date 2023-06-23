@@ -29,6 +29,7 @@ $router->addRoute('GET', '/chapters/fetch', 'ChaptersController@fetch');
 $router->addRoute('GET', '/chapters/all', 'ChaptersController@all');
 $router->addRoute('GET', '/chapters/fetch_next', 'ChaptersController@next');
 $router->addRoute('GET', '/chapters/fetch_prev', 'ChaptersController@previous');
+$router->addRoute('GET', '/chapters/read_first', 'ChaptersController@read_first');
 // reviews routes
 $router->addRoute('POST', '/reviews/store', 'ReviewsController@store');
 $router->addRoute('POST', '/reviews/update', 'ReviewsController@update');

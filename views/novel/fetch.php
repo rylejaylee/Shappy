@@ -64,12 +64,9 @@
                         <?php endif; ?>
                     </div>
                 </div>
-                <div class="text-center mt-2">
+                <div class="text-center mt-2 mb-4">
                     <h5 class="fw-bold"><?php echo $novel->title ?></h5>
-                    <span class="mt-2 d-flex justify-content-center">
-                        <span class="rating_average" data-stars="<?php echo $novel->ratings_average ?>"></span>
-                    </span>
-                    <small class="text-muted">(<?php echo number_format($novel->ratings_average, 2) ?>/5.00)</small>
+                    <a class="btn btn-primary" href="<?php echo url('chapters/read_first')."?novel=$novel->id" ?>">Start Reading</a>
                 </div>
 
                 <!-- Tabs navs -->
@@ -89,6 +86,11 @@
                     <div class="tab-pane fade show active" id="ex3-tabs-1" role="tabpanel" aria-labelledby="ex3-tab-1">
 
                         <div class="text-center">
+                            <span class="mt-2 d-flex justify-content-center">
+                                <span class="rating_average" data-stars="<?php echo $novel->ratings_average ?>"></span>
+                            </span>
+                            <div class="my-2"><strong>Rating:</strong> <?php echo number_format($novel->ratings_average, 2) ?> / 5.00</small></div>
+
                             <div class="my-2"><strong>Title:</strong> <?php echo $novel->title ?></div>
                             <div class="my-2"><strong>Author:</strong> <?php echo $novel->name ?></div>
                             <div class="my-2"><strong>Date created:</strong> <?php echo date('m/d/Y', strtotime($novel->created_at)) ?></div>
@@ -249,7 +251,7 @@
 
                             <!-- pagination links -->
                             <div class="d-flex justify-content-center p-2 bg-light w-100">
-                            <a href="<?php echo url('chapters/all?novel='.$novel->slug) ?>" class="text-primary">View All</a>
+                                <a href="<?php echo url('chapters/all?novel=' . $novel->slug) ?>" class="text-primary">View All</a>
                             </div>
                         <?php else : ?>
                             <h5 class="text-muted text-center bg-light p-3">No chapters added yet.</h5>

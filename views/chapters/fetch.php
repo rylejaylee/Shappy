@@ -13,7 +13,7 @@
                                     <?php echo $chapter->novel_title ?>
                                 </a>
                             </li>
-                            <li class="breadcrumb-item"><a href="<?php echo url('chapters/all?novel=' . $chapter->novel_slug) ?>">Chapters1 List</a></li>
+                            <li class="breadcrumb-item"><a href="<?php echo url('chapters/all?novel=' . $chapter->novel_slug) ?>">Chapters List</a></li>
                             <li class="breadcrumb-item "><?php echo $chapter->title ?></li>
                         </ol>
                     </nav>
