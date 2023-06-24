@@ -66,7 +66,7 @@
                 </div>
                 <div class="text-center mt-2 mb-4">
                     <h5 class="fw-bold"><?php echo $novel->title ?></h5>
-                    <a class="btn btn-primary" href="<?php echo url('chapters/read_first')."?novel=$novel->id" ?>">Start Reading</a>
+                    <a class="btn btn-primary" href="<?php echo url('chapters/read_first') . "?novel=$novel->id" ?>">Start Reading</a>
                 </div>
 
                 <!-- Tabs navs -->
@@ -96,8 +96,11 @@
                             <div class="my-2"><strong>Date created:</strong> <?php echo date('m/d/Y', strtotime($novel->created_at)) ?></div>
                             <div class="my-2"><strong>Status:</strong> <?php echo $novel->status ?></div>
                             <div class="my-2"><strong>Chapters:</strong> <?php echo count($chapters) ?></div>
-                            <div class="my-2"><strong>Category:</strong>
-                                <a href="# " class="btn btn-success btn-rounded btn-sm"><?php echo $novel->category ?></a>
+                            <div class="my-2"><strong>Views:</strong> <?php echo $novel->views ?? '0' ?></div>
+                            <div class="my-2"><strong>Categories:</strong>
+                                <?php foreach ($novel->categories as $category): ?>
+                                    <a href="# " class="btn btn-info btn-rounded btn-sm"><?php echo $category ?></a>
+                                <?php endforeach; ?>
                             </div>
                         </div>
 

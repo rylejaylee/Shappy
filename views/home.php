@@ -43,9 +43,6 @@ function status_color($status)
                                             </h6>
 
                                             <div>
-                                                <small class="text-primary">
-                                                    <i class="fas fa-book-open"></i> <?php echo $novel->category ?>
-                                                </small> <br />
                                                 <div class="text-muted" style="font-size: 12px">
                                                     <i class="fas fa-clock"></i>
                                                     <?php echo hummanDiff($novel->updated_at) ?>

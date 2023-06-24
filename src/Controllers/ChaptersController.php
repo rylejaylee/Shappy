@@ -6,6 +6,7 @@ use Shappy\Http\Controller;
 use Shappy\Http\Request;
 use Shappy\Models\Chapter;
 use Shappy\Models\Novel;
+use Shappy\Models\Views;
 use Shappy\Utils\Guard;
 use Shappy\Utils\Pagination;
 use Shappy\Utils\Validator;
@@ -65,6 +66,9 @@ class ChaptersController extends Controller
         $chapter->is_next = $is_next_exist;
         $chapter->is_prev = $is_prev_exist;
 
+        $views = new Views;
+        $views->increment($chapter->id);
+
         return $this->view('chapters/fetch', ['chapter' => $chapter, 'chapters' => $chapters]);
     }
 
@@ -118,8 +122,11 @@ class ChaptersController extends Controller
             $this->flash('error', $this->validator->get_error());
             return $this->redirect('/chapters/create?novel_id=' . $novel->id);
         }
-
-        if ($this->chapter->create($title, $content, auth()->id, $novel->id)) {
+        $result = $this->chapter->create($title, $content, auth()->id, $novel->id);
+        
+        if ($result) {
+            $views = new Views;
+            $views->create($novel->id, $result);
             $this->flash('success', 'Congrats! You have added new chapter to your novel.');
             return $this->redirect("/novel/fetch?novel={$novel->slug}");
         }

@@ -24,8 +24,11 @@ class Chapter
             ];
 
             $db->query($sql, $params);
+      
+            $res =  $db->get_last_inserted_id();
             $db->close();
-            return 1;
+
+            return $res;
         } catch (Exception $e) {
             echo "ERROR 500 : " . $e->getMessage();
         }

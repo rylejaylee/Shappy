@@ -9,9 +9,11 @@ use Shappy\Models\Chapter;
 use Shappy\Models\Novel;
 use Shappy\Models\Rating;
 use Shappy\Models\Review;
+use Shappy\Models\Views;
 use Shappy\Utils\Guard;
 use Shappy\Utils\Pagination;
 use Shappy\Utils\Validator;
+use Symfony\Component\VarDumper\Caster\Caster;
 
 class NovelsController extends Controller
 {
@@ -29,15 +31,22 @@ class NovelsController extends Controller
 
         $novel = $this->novel->get_by_slug_with_user($slug);
 
-        if(!$novel) return error_404();
-        
+        if (!$novel) return error_404();
+
+        $category = new Category;
+        $categories = array_map(fn($cat) => $cat->category  ,$category->get_by_novel($novel->id));
+    
+        $novel->categories = $categories;
+
         $chapter = new Chapter;
         $chapters = $chapter->get_all_by_novel_id($novel->id);
-
 
         $review = new Review;
         $reviews = $review->get_all_by_novel_id($novel->id);
 
+        $views = new Views;
+        $novel->views = $views->get_by_novel($novel->id)->total_views;
+    
         $rating = new Rating;
         $ratings_average = $rating->get_average($novel->id);
         $ratings_data = $rating->get_ratings($novel->id);
@@ -91,7 +100,6 @@ class NovelsController extends Controller
                     break;
             }
         }
-        // dd($_ratings);
 
         return $this->view("novel/fetch", [
             'novel' => $novel,
@@ -113,17 +121,19 @@ class NovelsController extends Controller
     public function store(Request $request)
     {
         Guard::authorized();
+        $category = new Category;
 
         $title = $request->input('title');
         $desc = $request->input('desc');
-        $category = $request->input('category');
+        $categories = $request->input('categories');
+
 
         $image_file = $request->file('image');
         $image_name = null;
 
         $this->validator->title($title);
         $this->validator->empty($desc, 'Description');
-        $this->validator->empty($category, 'Category');
+        $this->validator->is_null($categories, 'Category');
         $this->validator->max($desc, 'Description', 5000);
 
         if ($image_file["tmp_name"]) {
@@ -136,19 +146,20 @@ class NovelsController extends Controller
 
             return $this->redirect('/novel/create');
         }
-
+    
         // Generate the image_name
         if ($image_file["tmp_name"]) {
             $image_extension = strtolower(pathinfo($image_file['name'], PATHINFO_EXTENSION));
             // Create a unique image name
             $image_name = "novels/" . bin2hex(random_bytes(16)) . "." . $image_extension;
         }
-
-        if ($this->novel->create($title, auth()->id, $desc, $category, $image_name)) {
+        
+        $novel = $this->novel->create($title, auth()->id, $desc, $image_name);
+        if ($novel) {
             if ($image_file["tmp_name"]) {
                 move_uploaded_file($image_file["tmp_name"], "assets/images/$image_name");
-            }
-
+            }      
+            $category->create($categories, $novel);
             $this->flash('success', 'Congrats! You have created a new novel');
             return $this->redirect('/');
         }
@@ -165,6 +176,9 @@ class NovelsController extends Controller
         Guard::owner($novel->user_id);
         $category = new Category;
         $categories = $category->get_all();
+        $selectedCategories = $category->get_by_novel($novel->id);
+        $novel->categories = array_map(fn($cat) => $cat->id, $selectedCategories);
+      
         return $this->view("novel/edit", ['novel' => $novel, 'categories' => $categories]);
     }
 
@@ -173,26 +187,31 @@ class NovelsController extends Controller
         Guard::authorized();
         $id = $request->input('novel_id');
         $novel = $this->novel->get_by_id($id);
+      
         if (!$novel) error_404();
         Guard::owner($novel->user_id);
 
+        $category = new Category;
 
         $novel_id = $request->input('novel_id');
         $title = $request->input('title');
         $desc = $request->input('desc');
-        $category = $request->input('category');
+        $categories = $request->input('categories');
+
 
         $this->validator->title($title);
         $this->validator->empty($desc, 'Description');
         $this->validator->max($desc, 'Description', 5000);
-        $this->validator->empty($category, 'Category');
+        $this->validator->is_null($categories, 'Category');
 
         if ($this->validator->has_error()) {
             $this->flash('error', $this->validator->get_error());
             return $this->redirect('/novel/edit?id=' . $novel_id);
         }
 
-        if ($this->novel->update($title, $desc, $category, $novel_id)) {
+        if ($this->novel->update($title, $desc, $novel_id)) {
+            $category->delete($novel_id);
+            $category->create($categories, $novel_id);
             $this->flash('success', 'Congrats! You have updated a novel');
             return $this->redirect("/novel/fetch?novel=" . $this->novel->title_to_slug($title));
         } else {

@@ -139,6 +139,13 @@ class Validator
         if (empty(trim($text))) $this->error_msg =  "$name cannot be empty.";
     }
 
+    public function is_null($input, $name = 'input')
+    {
+        if ($this->error_msg) return;
+        if ($input == null) $this->error_msg =  "$name cannot be empty.";
+    }
+
+
     public function max($text, $name, $max)
     {
         if ($this->error_msg) return;

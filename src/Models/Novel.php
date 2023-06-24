@@ -7,44 +7,43 @@ use Shappy\Utils\Database;
 
 class Novel
 {
-    public function create($title, $user_id, $desc, $category_id, $img = null,)
+    public function create($title, $user_id, $desc, $img = null,)
     {
         try {
             $db = new Database;
-            $sql = "INSERT INTO novels (title, slug, user_id, description, category_id, img) VALUES (:title, :slug, :user_id, :desc, :category_id, :img)";
+            $sql = "INSERT INTO novels (title, slug, user_id, description, img) VALUES (:title, :slug, :user_id, :desc, :img)";
 
             $params = [
                 ":title"        =>      $title,
                 ":slug"         =>      $this->title_to_slug($title),
                 ":user_id"      =>      $user_id,
                 ":desc"         =>      $desc,
-                ":category_id"  =>      $category_id,
                 ":img"          =>      $img,
             ];
 
             $db->query($sql, $params);
+            $last_id = $db->get_last_inserted_id();
             $db->close();
-            return 1;
+            return $last_id;
         } catch (Exception $e) {
             echo "ERROR 500 : " . $e->getMessage();
         }
         return 0;
     }
 
-    public function update($title, $desc, $category_id, $nove_id)
+    public function update($title, $desc, $novel_id)
     {
         try {
             $db = new Database;
             $sql = "UPDATE novels 
-                    SET title=:title, slug=:slug, category_id=:category_id, description=:desc 
+                    SET title=:title, slug=:slug, description=:desc 
                     WHERE id=:novel_id";
 
             $params = [
                 ":title"        =>      $title,
                 ":slug"         =>      $this->title_to_slug($title),
                 ":desc"         =>      $desc,
-                ":category_id"  =>      $category_id,
-                ":novel_id"     =>      $nove_id
+                ":novel_id"     =>      $novel_id
             ];
 
             $db->query($sql, $params);
@@ -60,10 +59,8 @@ class Novel
     {
         try {
             $db = new Database;
-            $sql = "SELECT n.*, category , r.average_rating
+            $sql = "SELECT n.*, r.average_rating
                     FROM novels AS n 
-                    JOIN categories AS c
-                    ON n.category_id = c.id 
                     LEFT JOIN (SELECT novel_id, AVG(rating) AS average_rating FROM ratings GROUP BY novel_id) AS r
                     ON r.novel_id= n.id
                     ORDER BY updated_at DESC ";
@@ -125,18 +122,16 @@ class Novel
     {
         try {
             $db = new Database;
-            $sql = "SELECT n.id, user_id, title, description, img, slug, n.created_at, n.updated_at, n.status, u.name, u.email, category
+            $sql = "SELECT n.id, user_id, title, description, img, slug, n.created_at, n.updated_at, n.status, u.name, u.email
                     FROM novels as n
                     INNER JOIN users as u
                     ON n.user_id = u.id
-                    INNER JOIN categories as c
-                    on n.category_id = c.id
                     WHERE slug=:slug";
 
             $stmt = $db->query($sql, [':slug' => $slug]);
 
             $novel = $stmt->fetch();
-
+         
             $db->close();
 
             return $novel;

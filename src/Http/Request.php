@@ -63,24 +63,13 @@ class Request
     return $pathInfo;
   }
 
-  // public function post($name, $set_old = 0) {
-  //   $input = $this->sanitize($_POST[$name]);
-  //   if($set_old)
-  //     $_SESSION['_old_input'][$name] = $input;
-  //   return $input;
-  // }
-
-  // public function get($name) {
-  //     return $this->sanitize($_GET[$name]);
-  // }
 
   private function sanitize($input)
   {
-    return trim($input);
-    // return trim(stripslashes(htmlspecialchars($input)));
+    if(is_string($input))
+      return trim($input);
+    
+    return $input;
   }
 
-  // public function unset_old() {
-  //     unset( $_SESSION['_old_input']);
-  // }
 }

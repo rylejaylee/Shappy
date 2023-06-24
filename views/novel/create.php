@@ -30,12 +30,22 @@
                         <label class="form-label">Summary</label>
                         <textarea class="form-control" id="editor" name="desc" rows="3"><?php echo old('desc') ?? '' ?></textarea>
                     </div>
-                    <select class="form-select" aria-label="Default select example" name="category">
-                        <option selected value="">Select Category</option>
-                        <?php foreach ($categories as $category): ?>
-                            <option value="<?php echo $category->id ?>"><?php echo $category->category ?></option>
+
+                    <div class="mb-3">
+                        <label class="form-label">Select Categories</label>
+                        <br />
+                        <?php foreach ($categories as $category) : ?>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="categories[]" value="<?php echo $category->id ?>" id="<?php echo $category->id ?>" />
+                                <label class="form-check-label" for="<?php echo $category->id ?>">
+                                    <?php echo $category->category ?>
+                                </label>
+                            </div>
                         <?php endforeach; ?>
-                    </select>
+                    </div>
+
+
+
                     <input type="submit" value="create" name="submit" class="mt-3 btn btn-primary btn-block btn-lg">
                 </form>
             </div>
@@ -47,11 +57,14 @@
 <?php include_once 'views/layouts/footer.php' ?>
 
 <script>
-    tinymce.init({
-        selector: 'textarea#editor',
-        skin: 'bootstrap',
-        plugins: 'lists, link, image, media, emoticons',
-        toolbar: 'h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link image media | removeformat help',
-        menubar: false,
-    });
+    $(document).ready(function() {
+        tinymce.init({
+            selector: 'textarea#editor',
+            skin: 'bootstrap',
+            plugins: 'lists, link, image, media, emoticons',
+            toolbar: 'h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link image media | removeformat help',
+            menubar: false,
+        });
+
+    })
 </script>
