@@ -1,7 +1,7 @@
 <?php include_once 'views/layouts/header.php'; ?>
 
 <div class="row d-flex justify-content-center mt-5">
-    <div class="col-lg-8">
+    <div class="col-md-7 col-lg-8 col-xl-6 col-xxl-6">
         <div class="card">
             <div class="card-body">
                 <!-- header -->
@@ -66,7 +66,7 @@
                 </div>
                 <div class="text-center mt-2 mb-4">
                     <h5 class="fw-bold"><?php echo $novel->title ?></h5>
-                    <a class="btn btn-primary" href="<?php echo url('chapters/read_first') . "?novel=$novel->id" ?>">Start Reading</a>
+                    <a class="btn btn-primary <?php echo !count($chapters) ? "disabled" : null ?>" href="<?php echo url('chapters/read_first') . "?novel=$novel->id" ?>">Start Reading</a>
                 </div>
 
                 <!-- Tabs navs -->
@@ -89,8 +89,9 @@
                             <span class="mt-2 d-flex justify-content-center">
                                 <span class="rating_average" data-stars="<?php echo $novel->ratings_average ?>"></span>
                             </span>
-                            <div class="my-2"><strong>Rating:</strong> <?php echo number_format($novel->ratings_average, 2) ?> / 5.00</small></div>
-
+                            <div class="my-2">
+                                <strong>Rating:</strong> <?php echo number_format($novel->ratings_average, 2) ?> / 5.00 of <?php echo $novel->ratings_count . " vote(s)" ?></small>
+                            </div>
                             <div class="my-2"><strong>Title:</strong> <?php echo $novel->title ?></div>
                             <div class="my-2"><strong>Author:</strong> <?php echo $novel->name ?></div>
                             <div class="my-2"><strong>Date created:</strong> <?php echo date('m/d/Y', strtotime($novel->created_at)) ?></div>
@@ -98,7 +99,7 @@
                             <div class="my-2"><strong>Chapters:</strong> <?php echo count($chapters) ?></div>
                             <div class="my-2"><strong>Views:</strong> <?php echo $novel->views ?? '0' ?></div>
                             <div class="my-2"><strong>Categories:</strong>
-                                <?php foreach ($novel->categories as $category): ?>
+                                <?php foreach ($novel->categories as $category) : ?>
                                     <a href="# " class="btn btn-info btn-rounded btn-sm"><?php echo $category ?></a>
                                 <?php endforeach; ?>
                             </div>
@@ -264,6 +265,9 @@
                 <!-- Tabs content -->
             </div>
         </div>
+    </div>
+    <div class="col-md-5 col-lg-4 col-xl-4 col-xxl-3">
+        <?php include_once './views/layouts/sidebar.php'  ?>
     </div>
 </div>
 
@@ -460,26 +464,30 @@
         function add_rating_stars() {
             let rating_average = $(".rating_average")
 
-            let stars_data = rating_average.attr('data-stars')
-            let stars = stars_data.split('.');
+            for (let index = 0; index < rating_average.length; index++) {
+                const element = rating_average[index];
 
-            result = '';
-            // add the full stars
-            for (let index = 0; index < Number(stars[0]); index++) {
-                result += '<i class="fas fa-star text-warning me-2"></i>';
-            }
-            // add the half star
-            if (Number(stars[1] > 0)) {
-                result += '<i class="fas fa-star-half-stroke text-warning me-2"></i>';
-            }
+                let stars_data = $(element).attr('data-stars');
+                let stars = stars_data.split('.');
 
-            // add the blank stars
-            let blank_stars = Math.floor(5.0 - stars_data)
-            for (let index = 0; index < blank_stars; index++) {
-                result += '<i class="fa-regular fa-star text-warning me-2"></i>';
-            }
+                result = '';
+                // add the full stars
+                for (let index = 0; index < Number(stars[0]); index++) {
+                    result += '<i class="fas fa-star text-warning me-1"></i>';
+                }
+                // add the half star
+                if (Number(stars[1] > 0)) {
+                    result += '<i class="fas fa-star-half-stroke text-warning me-1"></i>';
+                }
 
-            rating_average.html(result);
+                // add the blank stars
+                let blank_stars = Math.floor(5.0 - stars_data)
+                for (let index = 0; index < blank_stars; index++) {
+                    result += '<i class="fa-regular fa-star text-warning me-1"></i>';
+                }
+
+                $(element).html(result);
+            }
         }
     })
 </script>

@@ -77,6 +77,9 @@ class ChaptersController extends Controller
         $novel = $request->input('novel');
         $chapter = $this->chapter->get_first($novel);
 
+        if (!$chapter)
+            return error_404();
+
         return $this->redirect("/chapters/fetch?id=$chapter->id");
     }
 
@@ -86,7 +89,7 @@ class ChaptersController extends Controller
         $novel = $request->input('novel');
 
         $chapter = $this->chapter->get_next_id($chapter_id, $novel);
-      
+
         return $this->redirect("/chapters/fetch?id=$chapter->id");
     }
 
@@ -123,7 +126,7 @@ class ChaptersController extends Controller
             return $this->redirect('/chapters/create?novel_id=' . $novel->id);
         }
         $result = $this->chapter->create($title, $content, auth()->id, $novel->id);
-        
+
         if ($result) {
             $views = new Views;
             $views->create($novel->id, $result);

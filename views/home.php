@@ -5,9 +5,9 @@ function status_color($status)
     return $status == 'completed' ? 'success' : ($status == 'ongoing' ? 'primary' : 'danger');
 }
 ?>
-<div class="row d-flex justify-content-center">
+<div class="row d-flex justify-content-center mt-5">
 
-    <div class="col-lg-6 mt-5">
+    <div class="col-md-7 col-lg-8 col-xl-6 col-xxl-6">
 
         <?php if (session()->has('success')) : ?>
             <div class="alert alert-success d-flex align-items-center" role="alert">
@@ -26,43 +26,21 @@ function status_color($status)
 
                 <div class="d-flex justify-content-center flex-wrap">
                     <?php foreach ($novels as $novel) : ?>
-                        <div class="me-2 mb-2 novel-card">
-                            <a class="text-dark" href="<?php echo url("novel/fetch?novel=$novel->slug") ?>">
-                                <div class="card">
-                                    <div class="image-container">
-                                        <img src="<?php echo $novel->img ? img($novel->img) : img('novel_cover_default.png')  ?>" alt="<?php echo $novel->title ?>" class="card-img-top" style="height:180px;">
-                                        <span class="novel-status badge rounded-pill badge-<?php echo status_color($novel->status) ?> m-2">
-                                            <?php echo $novel->status ?>
-                                        </span>
-                                    </div>
-                                    <div class="card-body p-2">
-                                        <div class="d-flex flex-column justify-content-between h-100 w-100">
-                                            <span class="rating_average d-flex justify-content-center" data-stars="<?php echo $novel->average_rating ?>"></span>
-                                            <h6 class="card-title" data-mdb-toggle="tooltip" title="<?php echo $novel->title ?>">
-                                                <?php echo excerpt($novel->title, 28) ?>
-                                            </h6>
-
-                                            <div>
-                                                <div class="text-muted" style="font-size: 12px">
-                                                    <i class="fas fa-clock"></i>
-                                                    <?php echo hummanDiff($novel->updated_at) ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </a>
-                        </div>
+                        <?php include './views/novel/novel_card.php' ?>
                     <?php endforeach; ?>
                 </div>
 
 
-                <div class="d-flex justify-content-center p-2 bg-light w-100">
-                    <a href="<?php echo url('novels/new') ?>" class="text-primary">View All</a>
+                <div class="d-flex justify-content-center p-2 bg-light w-100 mt-3">
+                    <a href="<?php echo url('novels/list?order_by=date&order=desc&status=all') ?>" class="btn btn-sm btn-primary">See More</a>
                 </div>
             </div>
         </div>
+    </div>
+
+
+    <div class="col-md-5 col-lg-4 col-xl-4 col-xxl-3">
+        <?php include_once './views/layouts/sidebar.php'  ?>
     </div>
 
 
@@ -81,7 +59,7 @@ function status_color($status)
             for (let index = 0; index < rating_average.length; index++) {
                 const element = rating_average[index];
 
-                let stars_data = $(element).data('stars');
+                let stars_data = $(element).attr('data-stars');
                 let stars = stars_data.split('.');
 
                 result = '';
@@ -91,13 +69,13 @@ function status_color($status)
                 }
                 // add the half star
                 if (Number(stars[1] > 0)) {
-                    result += '<i class="fas fa-star-half-stroke text-warning me-2"></i>';
+                    result += '<i class="fas fa-star-half-stroke text-warning me-1"></i>';
                 }
 
                 // add the blank stars
                 let blank_stars = Math.floor(5.0 - stars_data)
                 for (let index = 0; index < blank_stars; index++) {
-                    result += '<i class="fa-regular fa-star text-warning me-2"></i>';
+                    result += '<i class="fa-regular fa-star text-warning me-1"></i>';
                 }
 
                 $(element).html(result);

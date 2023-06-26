@@ -7,6 +7,11 @@ use Shappy\Utils\Database;
 
 class Novel
 {
+    public const DATE = 1;
+    public const NAME  = 2;
+    public const RATING = 3;
+    public const VIEWS = 4;
+
     public function create($title, $user_id, $desc, $img = null,)
     {
         try {
@@ -25,6 +30,25 @@ class Novel
             $last_id = $db->get_last_inserted_id();
             $db->close();
             return $last_id;
+        } catch (Exception $e) {
+            echo "ERROR 500 : " . $e->getMessage();
+        }
+        return 0;
+    }
+
+    public function search($searchText)
+    {
+        try {
+            $db = new Database;
+            $sql = "SELECT * FROM novels WHERE title LIKE :search";
+
+            $params = [
+                ":search"        =>     "%$searchText%",
+            ];
+
+            $stmt = $db->query($sql, $params);
+            $db->close();
+            return $stmt->fetchAll();
         } catch (Exception $e) {
             echo "ERROR 500 : " . $e->getMessage();
         }
@@ -55,15 +79,38 @@ class Novel
         return 0;
     }
 
-    public function fetch_all($limit = 0, $offset = 0)
+    public function fetch_all($limit = 0, $offset = 0, $filter = Novel::DATE, $arrangement = "desc", $status = 'all')
     {
+        // 1 - new 2 - pop
         try {
             $db = new Database;
-            $sql = "SELECT n.*, r.average_rating
+            $sql = "SELECT n.*, r.average_rating, v.total_views, c.categories, ch.chapters_count
                     FROM novels AS n 
                     LEFT JOIN (SELECT novel_id, AVG(rating) AS average_rating FROM ratings GROUP BY novel_id) AS r
                     ON r.novel_id= n.id
-                    ORDER BY updated_at DESC ";
+                    LEFT JOIN (SELECT novel_id, SUM(views) AS total_views FROM views GROUP BY novel_id) AS v
+                    ON v.novel_id = n.id
+                    LEFT JOIN (SELECT JSON_ARRAYAGG(category) AS categories, cn.novel_id  FROM categories_novels AS cn INNER JOIN categories AS c ON c.id = cn.category_id GROUP BY cn.novel_id) AS c
+					ON c.novel_id = n.id
+                    LEFT JOIN (SELECT novel_id, COUNT(id) as chapters_count FROM chapters GROUP BY novel_id) as ch
+                    ON ch.novel_id = n.id ";
+
+            if ($status != 'all')
+                $sql .= "WHERE status = '$status' ";
+
+            if ($filter == Novel::DATE)
+                $sql .= "ORDER BY n.updated_at ";
+            elseif ($filter == Novel::NAME)
+                $sql .= "ORDER BY LOWER(n.title) ";
+            elseif ($filter == Novel::VIEWS)
+                $sql .= "ORDER BY v.total_views ";
+            elseif ($filter == Novel::RATING)
+                $sql .= "ORDER BY r.average_rating ";
+
+            if ($arrangement == 'desc')
+                $sql .= "DESC ";
+            elseif ($arrangement == 'asc')
+                $sql .= "ASC ";
 
             if ($limit)
                 $sql .= "LIMIT $limit ";
@@ -82,6 +129,7 @@ class Novel
         }
         return [];
     }
+
 
     public function get_by_slug($slug)
     {
@@ -131,7 +179,7 @@ class Novel
             $stmt = $db->query($sql, [':slug' => $slug]);
 
             $novel = $stmt->fetch();
-         
+
             $db->close();
 
             return $novel;

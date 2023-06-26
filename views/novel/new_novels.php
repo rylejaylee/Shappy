@@ -5,9 +5,9 @@ function status_color($status)
     return $status == 'completed' ? 'success' : ($status == 'ongoing' ? 'primary' : 'danger');
 }
 ?>
-<div class="row d-flex justify-content-center">
+<div class="row d-flex justify-content-center mt-5">
 
-    <div class="col-lg-6 mt-5">
+    <div class="col-md-7 col-lg-8 col-xl-6 col-xxl-6">
 
         <?php if (session()->has('success')) : ?>
             <div class="alert alert-success d-flex align-items-center" role="alert">
@@ -19,52 +19,110 @@ function status_color($status)
         <?php endif; ?>
 
         <div class="card">
-            <div class="card-header">
-                <h3>New Novels</h3>
-            </div>
             <div class="card-body">
 
-                <div class="d-flex justify-content-center flex-wrap">
-                    <?php foreach ($novels as $novel) : ?>
-                        <div class="me-2 mb-2 novel-card">
-                            <a class="text-dark" href="<?php echo url("novel/fetch?novel=$novel->slug") ?>">
-                                <div class="card">
-                                    <div class="image-container">
-                                        <img src="<?php echo $novel->img ? img($novel->img) : img('novel_cover_default.png')  ?>" alt="<?php echo $novel->title ?>" class="card-img-top" style="height:180px;">
-                                        <span class="novel-status badge rounded-pill badge-<?php echo status_color($novel->status) ?> m-2">
-                                            <?php echo $novel->status ?>
-                                        </span>
-                                    </div>
-                                    <div class="card-body p-2">
-                                        <div class="d-flex flex-column justify-content-between h-100 w-100">
-                                            <span class="rating_average d-flex justify-content-center" data-stars="<?php echo $novel->average_rating ?>"></span>
-                                            <h6 class="card-title" data-mdb-toggle="tooltip" title="<?php echo $novel->title ?>">
-                                                <?php echo excerpt($novel->title, 28) ?>
-                                            </h6>
+                <h3 class="card-title">Novel List</h3>
+                <hr class="hr">
 
-                                            <div>
-                                                <small class="text-primary">
-                                                    <i class="fas fa-book-open"></i> <?php echo $novel->category ?>
-                                                </small> <br />
-                                                <div class="text-muted" style="font-size: 12px">
-                                                    <i class="fas fa-clock"></i>
-                                                    <?php echo hummanDiff($novel->updated_at) ?>
-                                                </div>
-                                            </div>
+                <form class="d-flex mb-4 justify-content-between" id="filter_form" method="GET">
+                    <div>
+                        <label for="order_by">Order By</label>
+                        <select class="form-select form-select-sm form-inline" id="order_by" name="order_by">
+                            <option value="date" <?php echo $_GET['order_by'] == 'date' ? 'selected' : null ?>>Date</option>
+                            <option value="name" <?php echo $_GET['order_by'] == 'name' ? 'selected' : null ?>>Name</option>
+                            <option value="rating" <?php echo $_GET['order_by'] == 'rating' ? 'selected' : null ?>>Rating</option>
+                            <option value="views" <?php echo $_GET['order_by'] == 'views' ? 'selected' : null ?>>Views</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="order">Order</label>
+                        <select class="form-select form-select-sm" id="order" name="order">
+                            <option value="desc" <?php echo $_GET['order'] == 'desc' ? 'selected' : null ?>>Descending</option>
+                            <option value="asc" <?php echo $_GET['order'] == 'asc' ? 'selected' : null ?>>Ascending</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="status">Status</label>
+                        <select class="form-select form-select-sm" id="status" name="status">
+                            <option value="all" <?php echo $_GET['status'] == 'all' ? 'selected' : null ?>>All</option>
+                            <option value="completed" <?php echo $_GET['status'] == 'completed' ? 'selected' : null ?>>Completed</option>
+                            <option value="hiatus" <?php echo $_GET['status'] == 'hiatus' ? 'selected' : null ?>>Hiatus</option>
+                            <option value="ongoing" <?php echo $_GET['status'] == 'ongoing' ? 'selected' : null ?>>Ongoing</option>
+                        </select>
+                    </div>
+                </form>
+
+                <div>
+                    <?php foreach ($novels as $novel) : ?>
+
+                        <div class="card mb-3 shadow-none">
+                            <div class="row g-0">
+                                <div class="col-lg-3 col-xl-3 col-xxl-2">
+
+                                    <div class="d-flex justify-content-center">
+                                        <div class="image-container">
+                                            <img class="novel-img-2" src="<?php echo $novel->img ? img($novel->img) : img('novel_cover_default.png')  ?>" alt="<?php echo $novel->title ?>">
+                                            <span class="novel-status badge rounded-pill badge-<?php echo status_color($novel->status) ?> m-2">
+                                                <?php echo $novel->status ?>
+                                            </span>
                                         </div>
                                     </div>
 
+                                    <span class="rating_average d-flex justify-content-center my-2" data-stars="<?php echo $novel->average_rating ?>"></span>
+                                    <div class="d-flex justify-content-center">
+                                        <div class="btn btn-primary btn-md mt btn-lg-block mt-1 mb-md-4  mb-lg-0">
+                                            Add to library
+                                        </div>
+                                    </div>
                                 </div>
-                            </a>
+                                <div class="col-lg-9 col-xl-9 col-xxl-10">
+                                    <div class="ms-3">
+                                        <h5 class="card-title"><?php echo $novel->title ?></h5>
+                                        <div class="d-flex tex-muted">
+                                            <div class="me-2" style="font-size: 12px">
+                                                <i class="fas fa-eye"></i>
+                                                <?php echo number_format_short($novel->total_views ?? 0) . " views" ?>
+                                            </div>
+                                            <div class="me-2" style="font-size: 12px">
+                                                <i class="fas fa-clock"></i>
+                                                <?php echo hummanDiff($novel->updated_at) ?>
+                                            </div>
+
+                                            <div class="me-2" style="font-size: 12px">
+                                                <i class="fas fa-book-open"></i>
+                                                <?php echo $novel->chapters_count ?? 0 ?> ch.
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <?php foreach (json_decode($novel->categories) as$category) : ?>
+                                                <a class="btn btn-info btn-sm btn-rounded mt-2 shadow-none py-1 px-2" style="font-size: 12px">
+                                                    <?php echo $category?>
+                                                </a>
+                                            <?php endforeach; ?>
+                                        </div>
+                                        <p class="card-text">
+                                            <?php echo excerpt($novel->description, 1000) ?>
+                                            <a href="<?php echo url("novel/fetch?novel=$novel->slug") ?>">show more</a>
+                                        </p>
+                                    </div>
+
+                                </div>
+                            </div>
                         </div>
+                        <hr class="hr">
                     <?php endforeach; ?>
 
                     <div class="d-flex justify-content-center p-2 bg-light w-100">
-                       <nav><?php echo $links ?></nav>
+                        <nav><?php echo $links ?></nav>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="col-md-5 col-lg-4 col-xl-4 col-xxl-3">
+        <?php include_once './views/layouts/sidebar.php'  ?>
     </div>
 
 
@@ -83,7 +141,7 @@ function status_color($status)
             for (let index = 0; index < rating_average.length; index++) {
                 const element = rating_average[index];
 
-                let stars_data = $(element).data('stars');
+                let stars_data = $(element).attr('data-stars');
                 let stars = stars_data.split('.');
 
                 result = '';
@@ -105,5 +163,10 @@ function status_color($status)
                 $(element).html(result);
             }
         }
+
+        $("select").change(function() {
+            $("#filter_form").submit();
+        })
+
     })
 </script>

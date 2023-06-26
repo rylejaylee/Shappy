@@ -14,14 +14,14 @@ function session()
     return new FlashMessage;
 }
 
-function img($img_name)
+function img($img_name = "")
 {
     if (HOME_URL == '/')
         return "/assets/images/$img_name";
     return HOME_URL . "/assets/images/$img_name";
 }
 
-function asset($asset)
+function asset($asset = "")
 {
     if (HOME_URL == '/')
         return "/assets/$asset";
@@ -116,4 +116,39 @@ function hummanDiff($timestamp)
     }
 
     return $humanDifference;
+}
+
+
+function number_format_short($n, $precision = 1)
+{
+    if ($n < 900) {
+        // 0 - 900
+        $n_format = number_format($n, $precision);
+        $suffix = '';
+    } elseif ($n < 900000) {
+        // 0.9k-850k
+        $n_format = number_format($n * 0.001, $precision);
+        $suffix = 'K';
+    } elseif ($n < 900000000) {
+        // 0.9m-850m
+        $n_format = number_format($n * 0.000001, $precision);
+        $suffix = 'M';
+    } elseif ($n < 900000000000) {
+        // 0.9b-850b
+        $n_format = number_format($n * 0.000000001, $precision);
+        $suffix = 'B';
+    } else {
+        // 0.9t+
+        $n_format = number_format($n * 0.000000000001, $precision);
+        $suffix = 'T';
+    }
+
+    // Remove unecessary zeroes after decimal. "1.0" -> "1"; "1.00" -> "1"
+    // Intentionally does not affect partials, eg "1.50" -> "1.50"
+    if ($precision > 0) {
+        $dotzero = '.' . str_repeat('0', $precision);
+        $n_format = str_replace($dotzero, '', $n_format);
+    }
+
+    return $n_format . $suffix;
 }

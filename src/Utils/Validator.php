@@ -132,6 +132,14 @@ class Validator
             $this->error_msg  = "Sorry, only JPG, JPEG, PNG, and GIF files are allowed.";
     }
 
+    public function not_in($text, $array, $name = "input")
+    {
+        if ($this->error_msg) return;
+        if (!in_array($text, $array))
+            $this->error_msg  = "Sorry $name does not exist.";
+    }
+
+
     public function empty($text, $name = 'input')
     {
         if ($this->error_msg) return;

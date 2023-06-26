@@ -34,8 +34,8 @@ class NovelsController extends Controller
         if (!$novel) return error_404();
 
         $category = new Category;
-        $categories = array_map(fn($cat) => $cat->category  ,$category->get_by_novel($novel->id));
-    
+        $categories = array_map(fn ($cat) => $cat->category, $category->get_by_novel($novel->id));
+
         $novel->categories = $categories;
 
         $chapter = new Chapter;
@@ -46,7 +46,7 @@ class NovelsController extends Controller
 
         $views = new Views;
         $novel->views = $views->get_by_novel($novel->id)->total_views;
-    
+
         $rating = new Rating;
         $ratings_average = $rating->get_average($novel->id);
         $ratings_data = $rating->get_ratings($novel->id);
@@ -54,8 +54,12 @@ class NovelsController extends Controller
 
         if (!$novel) error_404();
 
+        $popular = $this->novel->fetch_all(5, 0, Novel::VIEWS, 'desc');
+        $top_rated = $this->novel->fetch_all(5, 0, Novel::RATING, 'desc');
+
         // add new property on novel object
         $novel->ratings_average = floatval($ratings_average);
+        $novel->ratings_count = $ratings_count;
 
         $_ratings = [
             'rating_5' => 0,
@@ -101,13 +105,7 @@ class NovelsController extends Controller
             }
         }
 
-        return $this->view("novel/fetch", [
-            'novel' => $novel,
-            'chapters' => $chapters,
-            'reviews' => $reviews,
-            '_ratings' => $_ratings,
-            'ratings' => $ratings,
-        ]);
+        return $this->view("novel/fetch", compact('novel', 'chapters', 'reviews', '_ratings', 'ratings', 'popular', 'top_rated'));
     }
 
     public function create()
@@ -146,19 +144,19 @@ class NovelsController extends Controller
 
             return $this->redirect('/novel/create');
         }
-    
+
         // Generate the image_name
         if ($image_file["tmp_name"]) {
             $image_extension = strtolower(pathinfo($image_file['name'], PATHINFO_EXTENSION));
             // Create a unique image name
             $image_name = "novels/" . bin2hex(random_bytes(16)) . "." . $image_extension;
         }
-        
+
         $novel = $this->novel->create($title, auth()->id, $desc, $image_name);
         if ($novel) {
             if ($image_file["tmp_name"]) {
                 move_uploaded_file($image_file["tmp_name"], "assets/images/$image_name");
-            }      
+            }
             $category->create($categories, $novel);
             $this->flash('success', 'Congrats! You have created a new novel');
             return $this->redirect('/');
@@ -177,8 +175,8 @@ class NovelsController extends Controller
         $category = new Category;
         $categories = $category->get_all();
         $selectedCategories = $category->get_by_novel($novel->id);
-        $novel->categories = array_map(fn($cat) => $cat->id, $selectedCategories);
-      
+        $novel->categories = array_map(fn ($cat) => $cat->id, $selectedCategories);
+
         return $this->view("novel/edit", ['novel' => $novel, 'categories' => $categories]);
     }
 
@@ -187,7 +185,7 @@ class NovelsController extends Controller
         Guard::authorized();
         $id = $request->input('novel_id');
         $novel = $this->novel->get_by_id($id);
-      
+
         if (!$novel) error_404();
         Guard::owner($novel->user_id);
 

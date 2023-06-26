@@ -13,14 +13,62 @@
     <link rel="stylesheet" href="<?php echo asset('css/main.css') ?>">
     <style>
         .novel-card {
-            width: 200px !important;
-            height: 300px !important;
+            width: 180px !important;
+            height: 120px !important;
         }
+
+        .novel-img {
+            width: 180px !important;
+            height: 200px !important;
+        }
+
+        .novel-img-2 {
+            width: 100% !important;
+            height: 160px !important;
+        }
+
+        .search-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-list {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            display: none;
+            list-style-type: none;
+            padding: 0;
+            margin: 5px 35px 0 0;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            width: 350px;
+            z-index: 100;
+        }
+
+        .dropdown-list li {
+            padding: 8px;
+        }
+
+        .dropdown-list li:hover {
+            background-color: #f5f5f5;
+        }
+
+    
+
 
         @media only screen and (max-width: 490px) {
             .novel-card {
                 width: 180px !important;
                 height: 300px !important;
+            }
+        }
+
+        @media only screen and (max-width: 1200px) {
+            .novel-img-2 {
+                width: 120px !important;
+                height: 160px !important;
+
             }
         }
     </style>
@@ -51,9 +99,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">LIBRARY</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">COMPLETED</a>
-                    </li>
                 </ul>
                 <!-- Left links -->
             </div>
@@ -62,6 +107,17 @@
 
             <!-- Right elements -->
             <div class="d-flex align-items-center">
+                <div class="search-dropdown">
+                    <form class="d-flex input-group w-auto">
+                        <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" id="search" />
+                        <span class="input-group-text border-0" id="search-addon">
+                            <i class="fas fa-search"></i>
+                        </span>
+                    </form>
+                    <ul class="dropdown-list card">
+                        
+                    </ul>
+                </div>
 
                 <?php if (is_guest()) : ?>
                     <a href="<?php echo url('auth/login') ?>" class="btn btn-link px-3 me-2">
