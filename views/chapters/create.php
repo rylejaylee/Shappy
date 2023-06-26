@@ -1,7 +1,7 @@
 <?php include_once 'views/layouts/header.php' ?>
 
 
-<div class="row d-flex justify-content-center align-items-center h-100">
+<div class="row d-flex justify-content-center align-items-center">
     <div class="col-lg-4">
         <div class="card mt-5">
             <div class="card-body">

@@ -31,7 +31,6 @@ class PagesController extends Controller
         else if (!in_array($status, ['all', 'ongoing', 'completed', 'hiatus']))
             return error_404();
 
-        $pagination = new Pagination($novel->count()->count, $records_per_page);
         $filter = Novel::DATE;
         switch ($order_by) {
             case 'date':
@@ -40,34 +39,67 @@ class PagesController extends Controller
             case 'name':
                 $filter = Novel::NAME;
                 break;
-            case 'rating':
-                $filter = Novel::RATING;
+            case 'views':
+                $filter = Novel::VIEWS;
                 break;
             case 'rating':
-                $filter = Novel::VIEWS;
+                $filter = Novel::RATING;
                 break;
             default:
                 # code...
                 break;
         }
+        if($status != 'all')
+            $totalRecords = $novel->count_all($filter, $order, $status)->count;
+        else 
+            $totalRecords = $novel->count()->count;
+      
+        $pagination = new Pagination($totalRecords, $records_per_page);
 
         $novels = $novel->fetch_all($records_per_page, $pagination->getOffset(), $filter, $order, $status);
-     
+
         $links = $pagination->getPaginationLinks();
 
         $popular = $novel->fetch_all(5, 0, Novel::VIEWS);
         $top_rated = $novel->fetch_all(5, 0, Novel::RATING);
-     
+
         return $this->view('novel/new_novels', compact('novels', 'links', 'popular', 'top_rated'));
     }
 
-    public function search(Request $request) {
+    public function search(Request $request)
+    {
         $text = $request->input('text');
-       
+
         $novel = new Novel;
         $novels = $novel->search($text);
-        
+
         echo json_encode($novels);
+    }
+
+    public function genre(Request $request)
+    {
+        $filter = $request->input('filter');
+
+        $novel = new Novel;
+
+        $totalRecords = $novel->count_by_genre(strtolower($filter))->count;
+
+        $records_per_page = 2;
+        $pagination = new Pagination($totalRecords, $records_per_page);
+
+        $novels = $novel->fetch_by_genre($filter, $records_per_page, $pagination->getOffset());
+
+        $links = $pagination->getPaginationLinks();
+        $popular = $novel->fetch_all(5, 0, Novel::VIEWS, 'desc');
+        $top_rated = $novel->fetch_all(5, 0, Novel::RATING, 'desc');
+
+        return $this->view('novel/genre', compact('novels', 'popular', 'top_rated', 'links'));
+    }
+
+    public function advance_search(Request $request)
+    {
         
+
+        return $this->view('novel/advance_search');
     }
 }

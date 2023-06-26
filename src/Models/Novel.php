@@ -55,18 +55,19 @@ class Novel
         return 0;
     }
 
-    public function update($title, $desc, $novel_id)
+    public function update($title, $desc, $status, $novel_id)
     {
         try {
             $db = new Database;
             $sql = "UPDATE novels 
-                    SET title=:title, slug=:slug, description=:desc 
+                    SET title=:title, slug=:slug, description=:desc, status=:status
                     WHERE id=:novel_id";
 
             $params = [
                 ":title"        =>      $title,
                 ":slug"         =>      $this->title_to_slug($title),
                 ":desc"         =>      $desc,
+                ":status"         =>      $status,
                 ":novel_id"     =>      $novel_id
             ];
 
@@ -79,9 +80,53 @@ class Novel
         return 0;
     }
 
+    public function count_all($filter = Novel::DATE, $arrangement = "desc", $status = 'all')
+    {
+        try {
+            $db = new Database;
+            $sql = "SELECT count(n.id) as count
+                    FROM novels AS n 
+                    LEFT JOIN (SELECT novel_id, AVG(rating) AS average_rating FROM ratings GROUP BY novel_id) AS r
+                    ON r.novel_id= n.id
+                    LEFT JOIN (SELECT novel_id, SUM(views) AS total_views FROM views GROUP BY novel_id) AS v
+                    ON v.novel_id = n.id
+                    LEFT JOIN (SELECT JSON_ARRAYAGG(category) AS categories, cn.novel_id  FROM categories_novels AS cn INNER JOIN categories AS c ON c.id = cn.category_id GROUP BY cn.novel_id) AS c
+					ON c.novel_id = n.id
+                    LEFT JOIN (SELECT novel_id, COUNT(id) as chapters_count FROM chapters GROUP BY novel_id) as ch
+                    ON ch.novel_id = n.id ";
+
+            if ($status != 'all')
+                $sql .= "WHERE status = '$status' ";
+
+            if ($filter == Novel::DATE)
+                $sql .= "ORDER BY n.updated_at ";
+            elseif ($filter == Novel::NAME)
+                $sql .= "ORDER BY LOWER(n.title) ";
+            elseif ($filter == Novel::VIEWS)
+                $sql .= "ORDER BY v.total_views ";
+            elseif ($filter == Novel::RATING)
+                $sql .= "ORDER BY r.average_rating ";
+
+            if ($arrangement == 'desc')
+                $sql .= "DESC ";
+            elseif ($arrangement == 'asc')
+                $sql .= "ASC ";
+
+            $stmt = $db->query($sql);
+
+            $count = $stmt->fetch();
+
+            $db->close();
+            return $count;
+        } catch (Exception $e) {
+            echo "ERROR 500 : " . $e->getMessage();
+        }
+        return 0;
+    }
+
     public function fetch_all($limit = 0, $offset = 0, $filter = Novel::DATE, $arrangement = "desc", $status = 'all')
     {
-        // 1 - new 2 - pop
+
         try {
             $db = new Database;
             $sql = "SELECT n.*, r.average_rating, v.total_views, c.categories, ch.chapters_count
@@ -130,6 +175,60 @@ class Novel
         return [];
     }
 
+    public function fetch_by_genre($genre, $limit = null, $offset = 0)
+    {
+        try {
+            $db = new Database;
+            $sql = "SELECT n.*, r.average_rating, c.category
+                    FROM novels as n 
+                    INNER JOIN (SELECT c.*, novel_id FROM categories as c JOIN categories_novels as cn ON c.id = cn.category_id) as c
+                    ON  c.novel_id = n.id
+                    LEFT JOIN (SELECT novel_id, AVG(rating) AS average_rating FROM ratings GROUP BY novel_id) AS r
+                    ON r.novel_id= n.id
+                    WHERE c.category = LOWER(:genre)
+                    ORDER BY n.created_at DESC ";
+
+            if ($limit)
+                $sql .= "LIMIT $limit ";
+
+            if ($offset)
+                $sql .=  "OFFSET $offset";
+
+            $stmt = $db->query($sql, [':genre' => $genre]);
+
+            $novels = $stmt->fetchAll();
+
+            $db->close();
+            return $novels;
+        } catch (Exception $e) {
+            echo "ERROR 500 : " . $e->getMessage();
+        }
+        return [];
+    }
+
+    public function count_by_genre($genre)
+    {
+        try {
+            $db = new Database;
+            $sql = "SELECT count(n.id) as count
+                    FROM novels as n 
+                    INNER JOIN (SELECT c.*, novel_id FROM categories as c JOIN categories_novels as cn ON c.id = cn.category_id) as c
+                    ON  c.novel_id = n.id
+                    WHERE c.category = LOWER(:genre)";
+
+
+            $stmt = $db->query($sql, [':genre' => $genre]);
+
+            $count = $stmt->fetch();
+
+            $db->close();
+            return $count;
+        } catch (Exception $e) {
+            echo "ERROR 500 : " . $e->getMessage();
+        }
+        return [];
+    }
+
 
     public function get_by_slug($slug)
     {
@@ -170,10 +269,12 @@ class Novel
     {
         try {
             $db = new Database;
-            $sql = "SELECT n.id, user_id, title, description, img, slug, n.created_at, n.updated_at, n.status, u.name, u.email
+            $sql = "SELECT n.id, l.id as library_id, n.user_id, title, description, img, slug, n.created_at, n.updated_at, n.status, u.name, u.email
                     FROM novels as n
                     INNER JOIN users as u
                     ON n.user_id = u.id
+                    LEFT JOIN (SELECT * FROM library WHERE user_id='".(auth()->id ?? 0)."') as l
+                    ON n.id = l.novel_id
                     WHERE slug=:slug";
 
             $stmt = $db->query($sql, [':slug' => $slug]);
@@ -222,6 +323,20 @@ class Novel
             $db = new Database;
             $sql = "SELECT COUNT(*) as count FROM novels";
             $stmt = $db->query($sql);
+            $db->close();
+
+            return $stmt->fetch();
+        } catch (Exception $e) {
+            echo "ERROR 500 : " . $e->getMessage();
+        }
+    }
+
+    public function title_exist($title)
+    {
+        try {
+            $db = new Database;
+            $sql = "SELECT id FROM novels WHERE title=:title";
+            $stmt = $db->query($sql, [':title' => $title]);
             $db->close();
 
             return $stmt->fetch();

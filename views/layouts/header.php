@@ -43,6 +43,8 @@
             background-color: #fff;
             border: 1px solid #ccc;
             width: 350px;
+            max-height: 500px;
+            overflow-y: auto;
             z-index: 100;
         }
 
@@ -54,13 +56,10 @@
             background-color: #f5f5f5;
         }
 
-    
-
-
         @media only screen and (max-width: 490px) {
             .novel-card {
                 width: 180px !important;
-                height: 300px !important;
+                height: 120px !important;
             }
         }
 
@@ -97,7 +96,7 @@
                         <a class="nav-link" href="<?php echo url() ?>">HOME</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">LIBRARY</a>
+                        <a class="nav-link" href="<?php echo url("library") ?>">LIBRARY</a>
                     </li>
                 </ul>
                 <!-- Left links -->

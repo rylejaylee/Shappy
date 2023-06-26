@@ -18,10 +18,13 @@ use Symfony\Component\VarDumper\Caster\Caster;
 class NovelsController extends Controller
 {
 
-    public function __construct(
-        private $validator = new Validator,
-        private $novel = new Novel
-    ) {
+    private $validator;
+    private $novel;
+
+    public function __construct()
+    {
+        $this->validator = new Validator;
+        $this->novel = new Novel;
     }
 
 
@@ -30,7 +33,7 @@ class NovelsController extends Controller
         $slug = $request->input('novel');
 
         $novel = $this->novel->get_by_slug_with_user($slug);
-
+        
         if (!$novel) return error_404();
 
         $category = new Category;
@@ -130,6 +133,8 @@ class NovelsController extends Controller
         $image_name = null;
 
         $this->validator->title($title);
+        if($this->novel->title_exist($title))
+            $this->validator->set_error("Title already exists");
         $this->validator->empty($desc, 'Description');
         $this->validator->is_null($categories, 'Category');
         $this->validator->max($desc, 'Description', 5000);
@@ -195,19 +200,21 @@ class NovelsController extends Controller
         $title = $request->input('title');
         $desc = $request->input('desc');
         $categories = $request->input('categories');
+        $status = $request->input('status');
 
 
         $this->validator->title($title);
         $this->validator->empty($desc, 'Description');
         $this->validator->max($desc, 'Description', 5000);
         $this->validator->is_null($categories, 'Category');
+        $this->validator->not_in($status, ['ongoing', 'completed', 'hiatus'], 'Status');
 
         if ($this->validator->has_error()) {
             $this->flash('error', $this->validator->get_error());
             return $this->redirect('/novel/edit?id=' . $novel_id);
         }
 
-        if ($this->novel->update($title, $desc, $novel_id)) {
+        if ($this->novel->update($title, $desc, $status, $novel_id)) {
             $category->delete($novel_id);
             $category->create($categories, $novel_id);
             $this->flash('success', 'Congrats! You have updated a novel');

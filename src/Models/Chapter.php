@@ -139,10 +139,12 @@ class Chapter
             $db = new Database;
           
 
-            $sql = "SELECT c.id, novel_id, c.title, n.title as novel_title, content, c.created_at, c.updated_at, slug as novel_slug, n.user_id
+            $sql = "SELECT c.id, c.novel_id, c.title, n.title as novel_title, content, c.created_at, c.updated_at, slug as novel_slug, n.user_id, v.views
                     FROM chapters as c
-                    JOIN novels as n
+                    LEFT JOIN novels as n
                     on c.novel_id = n.id
+                    LEFT JOIN views as v
+                    on c.id = v.chapter_id
                     WHERE c.id= :chapter_id ";
          
             $params = [

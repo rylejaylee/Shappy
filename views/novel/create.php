@@ -1,7 +1,7 @@
 <?php include_once 'views/layouts/header.php' ?>
 
 
-<div class="row d-flex justify-content-center align-items-center h-100">
+<div class="row d-flex justify-content-center align-items-center">
     <div class="col-lg-4">
         <div class="card mt-5">
             <div class="card-body">
@@ -28,7 +28,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Summary</label>
-                        <textarea class="form-control" id="editor" name="desc" rows="3"><?php echo old('desc') ?? '' ?></textarea>
+                        <textarea class="form-control" id="editor" name="desc" rows="7"><?php echo old('desc') ?? '' ?></textarea>
                     </div>
 
                     <div class="mb-3">
@@ -55,16 +55,3 @@
 
 
 <?php include_once 'views/layouts/footer.php' ?>
-
-<script>
-    $(document).ready(function() {
-        tinymce.init({
-            selector: 'textarea#editor',
-            skin: 'bootstrap',
-            plugins: 'lists, link, image, media, emoticons',
-            toolbar: 'h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link image media | removeformat help',
-            menubar: false,
-        });
-
-    })
-</script>

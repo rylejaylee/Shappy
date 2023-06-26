@@ -65,13 +65,11 @@
         searchBox.focus(function() {
             dropdownList.html(`
                 <li class="text-center">
-                    <a href="#">Go to search page.</a>
+                    <a href="<?php echo url("novels/advance_search") ?>">Go to Advance Search</a>
                 </li>
             `)
             dropdownList.show();
         })
-
-
 
         $(document).on('click', function(event) {
             const targetElement = $(event.target);
@@ -80,7 +78,6 @@
                 dropdownList.hide();
             }
         });
-
 
 
         function debounce(func, delay) {
@@ -92,14 +89,22 @@
         }
 
         function search() {
+            dropdownList.show();
             let = searchText = searchBox.val();
-            if (searchText.length < 2) return;
+            let html = '';
+            if (searchText.length < 2) {
+                html += `<li class="text-center">
+                    <a href="<?php echo url("novels/advance_search") ?>">Go to Advance Search</a>
+                </li>`;
+                dropdownList.html(html)
+
+                return;
+            };
 
             $.post("<?php echo url('novels/search') ?>", {
                 text: searchText
             }, response => {
                 let novels = JSON.parse(response);
-                let html = '';
 
                 if (!novels.length) {
                     html += `
@@ -134,9 +139,9 @@
                 }
 
                 html += `<li class="text-center">
-                    <a href="#">Go to search page.</a>
+                    <a href="<?php echo url("novels/advance_search") ?>">Go to Advance Search</a>
                 </li>`;
-
+           
                 dropdownList.html(html)
             })
         }

@@ -41,3 +41,9 @@ $router->addRoute('POST', '/rating/user_rating', 'RatingsController@user_rating'
 // pages routes
 $router->addRoute('GET', '/novels/list', 'PagesController@list');
 $router->addRoute('POST', '/novels/search', 'PagesController@search');
+$router->addRoute('GET', '/novels/genre', 'PagesController@genre');
+$router->addRoute('GET', '/novels/advance_search', 'PagesController@advance_search');
+// library routes
+$router->addRoute('GET', '/library', 'LibraryController@index');
+$router->addRoute('GET', '/library/add', 'LibraryController@add');
+$router->addRoute('GET', '/library/remove', 'LibraryController@remove');

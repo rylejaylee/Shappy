@@ -11,7 +11,7 @@
                         <div class="d-flex">
                             <img class="me-2" src="<?php echo $_novel->img ? img($_novel->img) : img('novel_cover_default.png')  ?>" alt="Novel Image" style="height:75PX; width: 55px">
                             <div class="d-flex flex-column justify-content-between w-75">
-                                <span class="text-dark fw-bold" style="overflow-x:hidden; white-space: nowrap;text-overflow: ellipsis;"><?php echo $_novel->title ?></span>
+                                <span class="text-dark fw-bold" style="overflow-x:hidden; white-space: nowrap;text-overflow: ellipsis;" data-mdb-toggle="tooltip" title="<?php echo $_novel->title ?>"><?php echo $_novel->title ?></span>
                                 <small class="text-muted">
                                     <i class="fas fa-eye" style="font-size: 12px"></i> <?php echo number_format_short($_novel->total_views ?? 0) . " views" ?>
                                 </small>
@@ -45,7 +45,7 @@
                         <div class="d-flex">
                             <img class="me-2" src="<?php echo $_novel->img ? img($_novel->img) : img('novel_cover_default.png')  ?>" alt="Novel Image" style="height:75PX; width: 55px">
                             <div class="d-flex flex-column justify-content-between w-75">
-                                <span class="text-dark fw-bold" style="overflow-x:hidden; white-space: nowrap;text-overflow: ellipsis;"><?php echo $_novel->title ?></span>
+                                <span class="text-dark fw-bold" style="overflow-x:hidden; white-space: nowrap;text-overflow: ellipsis;" data-mdb-toggle="tooltip" title="<?php echo $_novel->title ?>"><?php echo $_novel->title ?></span>
                                 <small class="text-muted">
                                     <i class="fas fa-eye" style="font-size: 12px"></i> <?php echo number_format_short($_novel->total_views ?? 0) . " views" ?>
                                 </small>

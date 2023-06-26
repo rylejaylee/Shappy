@@ -161,6 +161,11 @@ class Validator
         if (strlen($text) > $max) $this->error_msg =  "$name cannot exceed $max characters.";
     }
 
+    public function set_error($error_msg)
+    {
+        $this->error_msg = $error_msg;
+    }
+
     public function has_error(): bool
     {
         return ($this->error_msg ? 1 : 0);

@@ -18,12 +18,12 @@ function status_color($status)
                             <li class="breadcrumb-item "><a href="<?php echo url('novel/fetch?novel=' . $_GET['novel']) ?>">
                                     <?php echo $novel->title ?></a>
                             </li>
-                            <li class="breadcrumb-item fw-bold">Chapters List</li>
+                            <li class="breadcrumb-item fw-bold">Chapter List</li>
                         </ol>
                     </nav>
                 </div>
                 <div class="card-body">
-                    <h3><?php echo $novel->title ?> Chapters List</h3>
+                    <h3>Chapter List</h3>
                     <hr class="hr">
                     <?php foreach ($chapters as $chapter) : ?>
                         <div class="d-flex justify-content-between align-items-center bg-light mt-2">

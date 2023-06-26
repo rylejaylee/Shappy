@@ -14,24 +14,16 @@
                     </nav>
 
                     <?php if (is_authorized() && is_owner($novel->user_id)) : ?>
-                        <div>
-                            <div class="d-flex">
-
-                                <div class="d-flex justify-content-end">
-                                    <a href="<?php echo url("chapters/create?novel_id=$novel->id") ?>" class="btn btn-sm btn-primary me-2">
-                                        <i class="fas fa-add"></i> New Chapter
-                                    </a>
-                                </div>
-                                <a href="<?php echo url("novel/edit?id=$novel->id") ?>" class="btn btn-sm btn-primary btn-floating me-2">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <form id="delete_form">
-                                    <input type="hidden" name="id" id="novel_id" value="<?php echo $novel->id; ?>">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger btn-floating">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
+                        <div class="d-flex">
+                            <a href="<?php echo url("novel/edit?id=$novel->id") ?>" class="btn btn-sm btn-primary btn-floating me-2" data-mdb-toggle="tooltip" title="Edit novel">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form id="delete_form" data-mdb-toggle="tooltip" title="Delete novel">
+                                <input type="hidden" name="id" id="novel_id" value="<?php echo $novel->id; ?>">
+                                <button type="submit" class="btn btn-sm btn-outline-danger btn-floating">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -66,7 +58,16 @@
                 </div>
                 <div class="text-center mt-2 mb-4">
                     <h5 class="fw-bold"><?php echo $novel->title ?></h5>
-                    <a class="btn btn-primary <?php echo !count($chapters) ? "disabled" : null ?>" href="<?php echo url('chapters/read_first') . "?novel=$novel->id" ?>">Start Reading</a>
+                    <div class="d-flex justify-content-center">
+                        <a class="btn btn-primary <?php echo !count($chapters) ? "disabled" : null ?>" href="<?php echo url('chapters/read_first') . "?novel=$novel->id" ?>">Start Reading</a>
+                        <?php if (is_authorized()): ?>
+                            <?php if (!$novel->library_id) : ?>
+                                <button class="btn btn-primary ms-2" data-mdb-toggle="tooltip" title="Add to library" id="btn-add-library" data-id="<?php echo $novel->id ?>"><i class="fas fa-add"></i></button>
+                            <?php else : ?>
+                                <button class="btn btn-danger ms-2" data-mdb-toggle="tooltip" title="Remove to library" id="btn-remove-library" data-id="<?php echo $novel->library_id ?>"><i class="fas fa-remove"></i></button>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
                 </div>
 
                 <!-- Tabs navs -->
@@ -98,9 +99,9 @@
                             <div class="my-2"><strong>Status:</strong> <?php echo $novel->status ?></div>
                             <div class="my-2"><strong>Chapters:</strong> <?php echo count($chapters) ?></div>
                             <div class="my-2"><strong>Views:</strong> <?php echo $novel->views ?? '0' ?></div>
-                            <div class="my-2"><strong>Categories:</strong>
+                            <div class="my-2"><strong>Genre:</strong>
                                 <?php foreach ($novel->categories as $category) : ?>
-                                    <a href="# " class="btn btn-info btn-rounded btn-sm"><?php echo $category ?></a>
+                                    <a href="<?php echo url("novels/genre?filter=" . strtolower($category)) ?>" class="btn btn-info btn-rounded btn-sm"><?php echo $category ?></a>
                                 <?php endforeach; ?>
                             </div>
                         </div>
@@ -229,7 +230,16 @@
 
                     <!-- tab chapters -->
                     <div class="tab-pane fade" id="ex3-tabs-2" role="tabpanel" aria-labelledby="ex3-tab-2">
+                        <div class="my-2">
+                            <div class="d-flex justify-content-between">
+                                <h5>Chapter List</h5>
+                                <a href="<?php echo url("chapters/create?novel_id=$novel->id") ?>" class="btn btn-sm btn-primary me-2">
+                                    <i class="fas fa-add fw-bold"></i> New Chapter
+                                </a>
+                            </div>
+                        </div>
 
+                        <hr class="hr">
                         <!-- list of chapters -->
                         <?php if (count($chapters)) : ?>
                             <?php foreach ($chapters as $chapter) : ?>
@@ -460,6 +470,31 @@
             }
 
         })
+
+        $("#btn-add-library").click(function() {
+            let novel_id = $(this).data('id');
+
+            $.get("<?php echo url("library/add") ?>", {
+                novel_id
+            }, response => {
+                if (Number(response)) {
+                    window.location = "<?php echo url("novel/fetch?novel=$novel->slug") ?>"
+                }
+            })
+        })
+
+        $("#btn-remove-library").click(function() {
+            let library_id = $(this).data('id');
+
+            $.get("<?php echo url("library/remove") ?>", {
+                library_id
+            }, response => {
+                if (Number(response)) {
+                    window.location = "<?php echo url("novel/fetch?novel=$novel->slug") ?>"
+                }
+            })
+        })
+
 
         function add_rating_stars() {
             let rating_average = $(".rating_average")
