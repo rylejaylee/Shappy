@@ -35,6 +35,11 @@ function status_color($status)
             </div>
         </div>
     </div>
+    
+    <div class="col-md-5 col-lg-4 col-xl-4 col-xxl-3">
+        <?php include_once './views/layouts/sidebar.php'  ?>
+    </div>
+
 </div>
 
 <?php include_once 'views/layouts/footer.php' ?>

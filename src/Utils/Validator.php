@@ -163,6 +163,7 @@ class Validator
 
     public function set_error($error_msg)
     {
+        if ($this->error_msg) return;
         $this->error_msg = $error_msg;
     }
 

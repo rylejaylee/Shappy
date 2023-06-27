@@ -152,3 +152,14 @@ function number_format_short($n, $precision = 1)
 
     return $n_format . $suffix;
 }
+
+
+function user_initials()
+{
+    $nameArray = explode(' ', auth()->name);
+    if (count($nameArray) == 1) {
+        return ucwords($nameArray[0][0]);
+    }
+
+    return ucwords("{$nameArray[0][0]}{$nameArray[1][0]}");
+}

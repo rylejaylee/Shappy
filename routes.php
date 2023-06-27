@@ -47,3 +47,6 @@ $router->addRoute('GET', '/novels/advance_search', 'PagesController@advance_sear
 $router->addRoute('GET', '/library', 'LibraryController@index');
 $router->addRoute('GET', '/library/add', 'LibraryController@add');
 $router->addRoute('GET', '/library/remove', 'LibraryController@remove');
+// settings routes
+$router->addRoute('GET', '/settings', 'SettingsController@index');
+$router->addRoute('POST', '/users/update', 'SettingsController@update_user');

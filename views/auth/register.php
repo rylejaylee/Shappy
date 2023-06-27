@@ -38,11 +38,12 @@
                         Repeat your password again.
                     </div>
                     <input class="btn btn-primary btn-block mt-3" type="submit" value="Register" name="submit">
+
+                    <div class="mt-4 text-center">
+                        <p>Already have an account yet? <a href="<?php echo url('auth/login') ?>">Login Here</a></p>
+                    </div>
+                    <p class="text-muted mt-4 text-center">sHappy &copy 2023</p>
                 </form>
-                <div class="mt-4 text-center">
-                    <p>Already have an account yet? <a href="<?php echo url('auth/login') ?>">Login Here</a></p>
-                </div>
-                <p class="text-muted mt-4 text-center">sHappy &copy 2023</p>
             </div>
         </div>
     </div>

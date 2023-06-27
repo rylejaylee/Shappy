@@ -35,7 +35,7 @@
         .dropdown-list {
             position: absolute;
             top: 100%;
-            right: 0;
+            left: 0;
             display: none;
             list-style-type: none;
             padding: 0;
@@ -98,26 +98,26 @@
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo url("library") ?>">LIBRARY</a>
                     </li>
+                    <li class="nav-item">
+
+                        <div class="search-dropdown">
+                            <form class="d-flex input-group w-auto">
+                                <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" id="search" />
+                                <span class="input-group-text border-0" id="search-addon">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                            </form>
+                            <ul class="dropdown-list card"></ul>
+                        </div>
+                    </li>
                 </ul>
+
                 <!-- Left links -->
             </div>
             <!-- Collapsible wrapper -->
 
-
             <!-- Right elements -->
             <div class="d-flex align-items-center">
-                <div class="search-dropdown">
-                    <form class="d-flex input-group w-auto">
-                        <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" id="search" />
-                        <span class="input-group-text border-0" id="search-addon">
-                            <i class="fas fa-search"></i>
-                        </span>
-                    </form>
-                    <ul class="dropdown-list card">
-                        
-                    </ul>
-                </div>
-
                 <?php if (is_guest()) : ?>
                     <a href="<?php echo url('auth/login') ?>" class="btn btn-link px-3 me-2">
                         Login
@@ -129,17 +129,17 @@
                     <!-- Avatar -->
                     <div class="dropdown">
                         <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#" id="navbarDropdownMenuAvatar" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user"></i>
+                            <small class="rounded-circle bg-primary p-1 text-white text-center" style="width: 30px; height: 30px;"><?php echo user_initials() ?></small>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
                             <li>
-                                <a class="dropdown-item" href="#">My profile</a>
+                                <a class="dropdown-item text-primary" href="<?php echo url('novel/create') ?>"><i class="fas fa-pen"></i> Create Novel</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="<?php echo url('novel/create') ?>">Create Novel</a>
+                                <a class="dropdown-item" href="<?php echo url('settings') ?>"><i class="fas fa-cog"></i> Settings</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="<?php echo url('auth/logout') ?>">Logout</a>
+                                <a class="dropdown-item" href="<?php echo url('auth/logout') ?>"><i class="fas fa-sign-out"></i> Logout</a>
                             </li>
                         </ul>
                     </div>

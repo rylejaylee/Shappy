@@ -49,7 +49,7 @@ class Auth
         session_destroy();
     }
 
-    private function set_auth($auth)
+    public function set_auth($auth)
     {
         $_SESSION['is_logged_in'] = 1;
         unset($auth->password);

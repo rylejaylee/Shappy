@@ -42,7 +42,7 @@
     <!-- Copyright -->
     <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
         © <?php echo date('Y') ?> Copyright:
-        <a class="text-reset fw-bold" href="https://mdbootstrap.com/">sHappy Novels</a>
+        <a class="text-reset fw-bold" href="<?php echo url() ?>">sHappy Novels</a>
     </div>
     <!-- Copyright -->
 </footer>
@@ -63,11 +63,6 @@
         const dropdownList = $('.dropdown-list');
 
         searchBox.focus(function() {
-            dropdownList.html(`
-                <li class="text-center">
-                    <a href="<?php echo url("novels/advance_search") ?>">Go to Advance Search</a>
-                </li>
-            `)
             dropdownList.show();
         })
 
@@ -93,11 +88,6 @@
             let = searchText = searchBox.val();
             let html = '';
             if (searchText.length < 2) {
-                html += `<li class="text-center">
-                    <a href="<?php echo url("novels/advance_search") ?>">Go to Advance Search</a>
-                </li>`;
-                dropdownList.html(html)
-
                 return;
             };
 
@@ -137,10 +127,6 @@
                         `
                     });
                 }
-
-                html += `<li class="text-center">
-                    <a href="<?php echo url("novels/advance_search") ?>">Go to Advance Search</a>
-                </li>`;
            
                 dropdownList.html(html)
             })
